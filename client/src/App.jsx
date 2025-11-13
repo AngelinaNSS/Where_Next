@@ -4,6 +4,10 @@ import SplashPage from "./pages/SplashPage";
 import AuthPage from "./pages/AuthPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import VideoPage from "./pages/VideoPage";
+import BlogPage from "./pages/BlogPage";
+
 
 
 
@@ -15,6 +19,10 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/video" element={<VideoPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+
 
       
 
