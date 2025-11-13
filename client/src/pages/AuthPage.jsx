@@ -16,7 +16,7 @@ const AuthPage = () => {
         fontSize: "1.5rem",
       }}
     >
-      <h1>Signup / Login Page</h1>
+      <h1>Welcome Traveler! </h1>
 
       {/* Signup Button */}
       <button
