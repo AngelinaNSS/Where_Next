@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import earthImg from "../assets/images/earth2.png";
-import planeImg from "../assets/images/plane2.png";
 import { useNavigate } from "react-router-dom";
 
 const SplashPage = () => {
@@ -58,7 +56,7 @@ const SplashPage = () => {
 
       {/* Earth */}
       <img
-        src={earthImg}
+        src="/assets/images/earth2.png"
         alt="Earth"
         style={{
           width: "80vmin",
@@ -90,7 +88,7 @@ const SplashPage = () => {
 
       {/* Plane */}
       <img
-        src={planeImg}
+        src="/assets/images/plane2.png"
         alt="Plane"
         style={{
           position: "absolute",
@@ -141,5 +139,6 @@ const SplashPage = () => {
 };
 
 export default SplashPage;
+
 
 
