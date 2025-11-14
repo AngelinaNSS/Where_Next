@@ -4,12 +4,11 @@ import SplashPage from "./pages/SplashPage";
 import AuthPage from "./pages/AuthPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-import ProfilePage from "./pages/ProfilePage.jsx";
+import ProfilePage from "./pages/ProfilePage";
 import VideoPage from "./pages/VideoPage";
 import BlogPage from "./pages/BlogPage";
-
-
-
+import TravelMap from "./pages/TravelPage";
+import SearchResults from "./pages/SearchResults"; 
 
 function App() {
   return (
@@ -22,13 +21,12 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/video" element={<VideoPage />} />
         <Route path="/blog" element={<BlogPage />} />
-
-
-      
-
+        <Route path="/travel-map" element={<TravelMap />} />
+        <Route path="/search/:query" element={<SearchResults />} /> 
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
