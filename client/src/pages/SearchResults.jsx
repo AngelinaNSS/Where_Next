@@ -197,28 +197,35 @@ const SearchResults = () => {
   return (
     <div style={{ padding: "40px", fontFamily: "Poppins, sans-serif" }}>
       {/* Banner */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "30px",
-          padding: "20px",
-          borderRadius: "12px",
-          background:
-            "linear-gradient(120deg, #a7c7b7 0%, #007f5f 100%)",
-          color: "#fff",
-        }}
-      >
-        <h1 style={{ fontSize: "2.5rem" }}>{query}</h1>
-        {countryData?.flags?.png && (
-          <img
-            src={countryData.flags.png}
-            alt="flag"
-            style={{ width: "80px", borderRadius: "8px" }}
-          />
-        )}
-      </div>
+      
+     <div
+  onClick={() => navigate(`/destination/${query}`)}
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "30px",
+    padding: "20px",
+    borderRadius: "12px",
+    background:
+      "linear-gradient(120deg, #a7c7b7 0%, #007f5f 100%)",
+    color: "#fff",
+    cursor: "pointer",
+    transition: "transform 0.2s",
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <h1 style={{ fontSize: "2.5rem" }}>{query}</h1>
+  {countryData?.flags?.png && (
+    <img
+      src={countryData.flags.png}
+      alt="flag"
+      style={{ width: "80px", borderRadius: "8px" }}
+    />
+  )}
+</div>
+
 
       <button
         onClick={() => navigate(-1)}

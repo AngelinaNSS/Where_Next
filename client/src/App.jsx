@@ -9,6 +9,9 @@ import VideoPage from "./pages/VideoPage";
 import BlogPage from "./pages/BlogPage";
 import TravelMap from "./pages/TravelPage";
 import SearchResults from "./pages/SearchResults"; 
+import DestinationPage from "./pages/DestinationPage";
+import ProgressPage from "./pages/ProgressPage";
+
 
 function App() {
   return (
@@ -23,6 +26,11 @@ function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/travel-map" element={<TravelMap />} />
         <Route path="/search/:query" element={<SearchResults />} /> 
+        <Route path="/destination/:countryName" element={<DestinationPage />} />
+        <Route path="/progress" element={<ProgressPage />} />
+
+
+
       </Routes>
     </Router>
   );
