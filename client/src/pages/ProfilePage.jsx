@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GiTreasureMap } from "react-icons/gi";
 import { MdInsights } from "react-icons/md"; 
+import { destinationsData } from "../data/destinations";
+
+
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -125,27 +128,28 @@ const ProfilePage = () => {
           }}
         >
           {/* Profile Picture & Name */}
-          <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
-          >
-            <img
-              src="https://via.placeholder.com/100"
-              alt="Profile"
-              style={{
-                width: "90px",
-                height: "90px",
-                borderRadius: "50%",
-                marginRight: "1rem",
-                objectFit: "cover",
-              }}
-            />
-            <div>
-              <h2 style={{ margin: 0, fontSize: "1.4rem", color: colors.green }}>
-                Wendy_1289
-              </h2>
-              <span style={{ fontSize: "0.95rem", color: "#666" }}>Adventurer</span>
-            </div>
-          </div>
+<div
+  style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
+>
+  <img
+    src="/profile.jpg"
+    alt="Black woman portrait" 
+    style={{
+      width: "90px",
+      height: "90px",
+      borderRadius: "50%",
+      marginRight: "1rem",
+      objectFit: "cover",
+    }}
+  />
+  <div>
+    <h2 style={{ margin: 0, fontSize: "1.4rem", color: colors.green }}>
+      Wendy_1289
+    </h2>
+    <span style={{ fontSize: "0.95rem", color: "#666" }}>Adventurer</span>
+  </div>
+</div>
+
 
           {/* Bio */}
           <p style={{ margin: "0.8rem 0", color: "#444", lineHeight: 1.5 }}>
@@ -241,73 +245,104 @@ const ProfilePage = () => {
         {/* Content Area */}
         <main style={{ flex: 1, minWidth: 0 }}>
           
-          {/* Recommended Videos */}
-          <section
-            style={{
-              marginBottom: "2rem",
-              backgroundColor: colors.white,
-              borderRadius: "16px",
-              boxShadow: colors.cardShadow,
-              padding: "1.5rem",
-            }}
-          >
-            <h2
-              style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}
-            >
-              Recommended Videos
-            </h2>
+          
+          
+          
+          {/* Destinations For You */}
+<section
+  style={{
+    marginBottom: "2rem",
+    backgroundColor: colors.white,
+    borderRadius: "16px",
+    boxShadow: colors.cardShadow,
+    padding: "1.5rem",
+  }}
+>
+  <h2
+    style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}
+  >
+    Destinations For You
+  </h2>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "1.2rem",
-              }}
-            >
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  onClick={() => navigate("/blog")}
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor: colors.white,
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    border: "1px solid #eee",
-                    transition:
-                      "transform 0.2s ease, box-shadow 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 8px 16px rgba(0,0,0,0.12)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "none";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  {/* Thumbnail */}
-                  <div
-                    style={{
-                      height: "140px",
-                      background:
-                        "linear-gradient(135deg, #a7c7b7 0%, #007f5f 100%)",
-                    }}
-                  />
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+      gap: "1.2rem",
+    }}
+  >
+    {[
+      {
+        id: 1,
+        name: "Kyoto, Japan",
+        image: "/kyoto.jpg",
+        tagline: "Kyoto is a city full of temples, gardens, and timeless tradition. Perfect for travelers who love history and culture.",
+      },
+      {
+        id: 2,
+        name: "Cape Town, South Africa",
+        image: "/capetown.jpg",
+        tagline: "Cape Town offers stunning beaches, mountains, and vibrant culture. Great for adventurers and nature lovers.",
+      },
+      {
+        id: 3,
+        name: "Reykjavik, Iceland",
+        image: "/iceland.jpg",
+        tagline: "Reykjavik is the gateway to Iceland's glaciers, hot springs, and northern lights. Ideal for nature enthusiasts.",
+      },
+      {
+        id: 4,
+        name: "Bali, Indonesia",
+        image:
+          "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
+        tagline: "Bali has beautiful beaches, rice fields, and spiritual retreats. Perfect for relaxation and cultural exploration.",
+  },
 
-                  <div style={{ padding: "0.9rem" }}>
-                    <h3 style={{ color: colors.brown, margin: 0 }}>
-                      Sophia_Landau {i}
-                    </h3>
-                    <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
-                      Hey! My goal is to travel all across Asia. Check it out :)
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+    ].map((dest) => (
+      
+      <div
+        key={dest.id}
+        onClick={() => navigate(`/destination/${dest.id}`)}
+        style={{
+          cursor: "pointer",
+          backgroundColor: colors.white,
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "1px solid #eee",
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow =
+            "0 8px 16px rgba(0,0,0,0.12)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "none";
+          e.currentTarget.style.boxShadow = "none";
+        }}
+      >
+        {/* Destination Image */}
+        <div
+          style={{
+            height: "160px",
+            backgroundImage: `url(${dest.image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+
+        {/* Destination Info */}
+        <div style={{ padding: "0.9rem" }}>
+          <h3 style={{ color: colors.brown, margin: 0 }}>{dest.name}</h3>
+          <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
+            {dest.tagline}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
 
           {/* Trending Blogs */}
           <section
@@ -334,7 +369,7 @@ const ProfilePage = () => {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  onClick={() => navigate("/blog")}
+                  onClick={() => navigate(`/blog/${i}`)}
                   style={{
                     cursor: "pointer",
                     backgroundColor: colors.white,
@@ -358,7 +393,7 @@ const ProfilePage = () => {
                     Blog Title {i}
                   </h3>
                   <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
-                    A short preview of the blog post goes here...
+                    Backpacking Bangkok — My First Day!
                   </p>
                 </div>
               ))}
