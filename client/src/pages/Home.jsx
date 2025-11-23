@@ -1,47 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
-  const [query, setQuery] = useState("");
+const HomePage = () => {
   const navigate = useNavigate();
 
-  const handleSearch = (e) => {
-    e.preventDefault(); // prevent form from refreshing page
-    if (!query.trim()) return; // ignore empty search
-    navigate(`/search/${query}`);
-  };
-
   return (
-    <div style={{ padding: "40px", fontFamily: "Poppins, sans-serif" }}>
-      <h1>Where Next?</h1>
+    <div
+      style={{
+        width: "100vw",
+        minHeight: "100vh",
+        padding: "40px",
+        fontFamily: "Poppins, sans-serif",
+        backgroundColor: "#f8f8f8",
+      }}
+    >
+      <h1 style={{ fontSize: "2.3rem", color: "#2a2a2a" }}>
+        Welcome to Where Next?
+      </h1>
 
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Type a city or country..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{
-            padding: "10px",
-            width: "300px",
-            fontSize: "16px",
-            marginRight: "10px",
-          }}
-        />
+      <p style={{ marginTop: "10px", fontSize: "1.1rem", color: "#555" }}>
+        Explore destinations, track your travels, and discover something new.
+      </p>
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            cursor: "pointer",
-          }}
-        >
-          Search
-        </button>
-      </form>
+      <button
+        onClick={() => navigate("/profile")}
+        style={{
+          marginTop: "30px",
+          padding: "15px 25px",
+          backgroundColor: "#2ecc71",
+          border: "none",
+          borderRadius: "12px",
+          color: "white",
+          fontSize: "1.1rem",
+          cursor: "pointer",
+        }}
+      >
+        Go to Profile
+      </button>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;
+

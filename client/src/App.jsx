@@ -11,6 +11,19 @@ import TravelMap from "./pages/TravelPage";
 import SearchResults from "./pages/SearchResults"; 
 import DestinationPage from "./pages/DestinationPage"; 
 import ProgressPage from "./pages/ProgressPage";
+import RewardsPage from "./pages/RewardsPage";
+import SettingsPage from "./pages/SettingsPage";
+import WishlistPage from "./pages/WishlistPage";
+import LanguageFlags from "./components/LanguageFlags";
+import EditProfilePage from "./pages/EditProfilePage";
+import Footer from "./components/Footer";
+import TravelGalleryPage from "./pages/TravelGalleryPage";
+
+
+
+
+
+
 
 
 function App() {
@@ -28,11 +41,23 @@ function App() {
         <Route path="/search/:query" element={<SearchResults />} /> 
         <Route path="/destination/:id" element={<DestinationPage />} />
         <Route path="/progress" element={<ProgressPage />} />
+        <Route path="/rewards" element={<RewardsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/languageflags" element={<LanguageFlags />} />
+        <Route path="/edit-profile" element={<EditProfilePage />} />
+        <Route path="/travel-gallery" element={<TravelGalleryPage />} />
+
+
+
+        
 
 
 
       </Routes>
+      <Footer />
     </Router>
+    
   );
 }
 

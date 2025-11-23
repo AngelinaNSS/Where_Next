@@ -1,0 +1,14 @@
+{
+  "welcome": "Bienvenue sur Where Next ?",
+  "profile": "Profil",
+  "settings": "Paramètres",
+  "rewards": "Récompenses",
+  "wishlist": "Liste de souhaits",
+  "explore": "Explorer",
+  "search_placeholder": "Rechercher un pays...",
+  "login": "Se connecter",
+  "logout": "Se déconnecter",
+  "submit": "Soumettre",
+  "back": "Retour",
+  "next": "Suivant"
+}
