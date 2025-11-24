@@ -8,8 +8,8 @@ const LoginPage = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // later we’ll connect this to backend authentication
-    navigate("/profile"); // temporary: go to Profile page after login
+    
+    navigate("/profile"); 
   };
 
   return (

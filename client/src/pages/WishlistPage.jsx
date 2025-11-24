@@ -9,15 +9,14 @@ const WishlistPage = () => {
     {
       id: 1,
       name: "Bali, Indonesia",
-      image:
-        "https://images.unsplash.com/photo-1502920917128-1aa500764b7a?q=80&w=2070&auto=format",
-      description: "Tropical beaches, temples, and nature escapes.",
+      image:"/bali.jpg",
+        description: "Tropical beaches, temples, and nature escapes.",
     },
     {
       id: 2,
       name: "Reykjavik, Iceland",
       image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2070&auto=format",
+        "/icecave.jpg",
       description: "Northern lights, waterfalls, and volcanic landscapes.",
     },
     {
@@ -27,6 +26,12 @@ const WishlistPage = () => {
         "https://images.unsplash.com/photo-1549692520-acc6669e2f0c?q=80&w=2070&auto=format",
       description: "Temples, cherry blossoms, and rich traditional culture.",
     },
+  {
+  id: 4,
+  name: "Toronto, Ontario",
+  image: "/toronto.jpg", 
+  description: "Toronto is a bustling, multicultural city known for its iconic skyline, diverse neighborhoods, and vibrant arts scene."
+}
   ];
 
   return (

@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GiTreasureMap } from "react-icons/gi";
-import { MdInsights } from "react-icons/md"; 
+import { MdInsights, MdCardGiftcard } from "react-icons/md";
+import { FaRegHeart, FaImages } from "react-icons/fa";
+import { IoMdMap } from "react-icons/io";
 import { destinationsData } from "../data/destinations";
 import { useTranslation } from "react-i18next";
 import HamburgerMenu from "../components/HamburgerMenu";
-
-
-
-
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -16,18 +14,13 @@ const ProfilePage = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { t } = useTranslation();
 
-  
-
-  
   useEffect(() => {
     const updateIsMobile = () => setIsMobile(window.innerWidth < 900);
     updateIsMobile();
     window.addEventListener("resize", updateIsMobile);
     return () => window.removeEventListener("resize", updateIsMobile);
-    
   }, []);
 
-  
   const colors = {
     bg: "#f9f7f3",
     text: "#2c2c2c",
@@ -39,6 +32,24 @@ const ProfilePage = () => {
     cardShadow: "0 4px 12px rgba(0,0,0,0.1)",
   };
 
+  
+  const sidebarButton = (bg) => ({
+    width: "100%",
+    padding: "12px 18px",
+    backgroundColor: bg,
+    color: "#fff",
+    border: "none",
+    borderRadius: "12px",
+    fontSize: "1rem",
+    cursor: "pointer",
+    fontWeight: "600",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    justifyContent: "center",
+    transition: "0.3s",
+  });
+
   return (
     <div
       style={{
@@ -47,17 +58,14 @@ const ProfilePage = () => {
         backgroundColor: colors.bg,
         color: colors.text,
         fontFamily: "'Poppins', sans-serif",
-        
       }}
     >
+      {/* Hamburger menu */}
+      <div style={{ position: "absolute", top: "20px", right: "20px" }}>
+        <HamburgerMenu />
+      </div>
 
-      <div style={{ position: "absolute", top: "20px", right: "20px", border: "2px solid red" }}>
-  <HamburgerMenu />
-</div>
-
-  
-
-      {/* Top Bar */}
+      {/* Top Navigation Bar */}
       <div
         style={{
           display: "flex",
@@ -132,386 +140,306 @@ const ProfilePage = () => {
           alignItems: "flex-start",
         }}
       >
-        {/* Sidebar */}
+        {/* Sidebar Panel */}
         <aside
-          style={{
-            width: isMobile ? "100%" : "320px",
-            flexShrink: 0,
-            backgroundColor: colors.white,
-            borderRadius: "16px",
-            padding: "1.5rem",
-            boxShadow: colors.cardShadow,
-          }}
-        >
-          {/* Profile Picture & Name */}
-<div
-  style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
->
-  <img
-    src="/profile.jpg"
-    alt="portrait" 
-    onClick={() => navigate("/edit-profile")}
-    style={{
-      width: "90px",
-      height: "90px",
-      borderRadius: "50%",
-      marginRight: "1rem",
-      objectFit: "cover",
-      cursor: "pointer",
-    }}
-  />
-  <div>
-    <h2 style={{ margin: 0, fontSize: "1.4rem", color: colors.green }}>
-      Wendy_1289
-    </h2>
-    <span style={{ fontSize: "0.95rem", color: "#666" }}>{t("adventurer")}</span>
-  </div>
-</div>
-
-
-<div style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
-  <button
-    onClick={() => navigate("/rewards")}
-    style={{
-      padding: "10px 16px",
-      background: colors.green,
-      color: "#fff",
-      border: "none",
-      borderRadius: "10px",
-      fontSize: "1rem",
-      cursor: "pointer",
-    }}
-  >
-     {t("rewards")}
-  </button>
-
-</div>
-
-<button
-  onClick={() => navigate("/wishlist")}
   style={{
-    padding: "12px 18px",
-    background: "#3498db",
-    color: "#fff",
-    borderRadius: "12px",
-    border: "none",
-    marginTop: "15px",
-    cursor: "pointer",
-  }}
->
-  {t("wishlist")}
-</button>
-
-
-          {/* Bio */}
-          <p style={{ margin: "0.8rem 0", color: "#444", lineHeight: 1.5 }}>
-            Hi, I'm Wendy — explorer and storyteller sharing global travel
-            experiences. Expect sustainable travel tips, itineraries, and honest
-            reflections from the road.
-          </p>
-
-          {/* Quick facts */}
-          <div style={{ display: "grid", gap: "0.5rem", marginTop: "1rem" }}>
-            <div>
-              <strong>{t("hobbies")}:</strong> Hiking, Photography, Local Cuisine
-            </div>
-            <div>
-              <strong>Favorite place:</strong> Kyoto, Japan
-            </div>
-            <div>
-              <strong>Next destination:</strong> Iceland
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              marginTop: "1rem",
-              fontWeight: "600",
-              color: "#333",
-            }}
-          >
-            <span>{t("followers")}: 1280</span>
-            <span>{t("following")}: 245</span>
-          </div>
-
-          {/* Map Button */}
-          <div style={{ marginTop: "1rem" }}>
-            <button
-              onClick={() => navigate("/travel-map")}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.6rem",
-                padding: "0.6rem 1rem",
-                borderRadius: "10px",
-                border: "none",
-                backgroundColor: colors.yellow,
-                color: "#fff",
-                cursor: "pointer",
-                fontWeight: "600",
-                fontSize: "0.95rem",
-                transition: "0.3s",
-              }}
-              onMouseOver={(e) =>
-                (e.currentTarget.style.backgroundColor = colors.yellowHover)
-              }
-              onMouseOut={(e) =>
-                (e.currentTarget.style.backgroundColor = colors.yellow)
-              }
-            >
-              
-              {t("Take the Quiz")}
-            </button>
-          </div>
-
-          {/* Travel Gallery Button */}
-<button
-  onClick={() => navigate("/travel-gallery")}
-  style={{
-    padding: "12px 18px",
-    background: "#ff7eb9", // pastel pink
-    color: "#fff",
-    border: "none",
-    borderRadius: "20px",
-    fontSize: "1rem",
-    cursor: "pointer",
-    fontWeight: "600",
-    marginTop: "12px",
-    transition: "0.3s",
-  }}
-  onMouseOver={(e) =>
-    (e.currentTarget.style.backgroundColor = "#ff99c8")
-  }
-  onMouseOut={(e) =>
-    (e.currentTarget.style.backgroundColor = "#ff7eb9")
-  }
->
-  Travel Gallery
-</button>
-
-
-          {/* NEW PROGRESS BUTTON */}
-          <div style={{ marginTop: "1rem" }}>
-            <button
-              onClick={() => navigate("/progress")}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.6rem",
-                padding: "0.6rem 1rem",
-                borderRadius: "10px",
-                border: "none",
-                backgroundColor: "#3b82f6",
-                color: "#fff",
-                cursor: "pointer",
-                fontWeight: "600",
-                fontSize: "0.95rem",
-                transition: "0.3s",
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#2563eb")}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#3b82f6")}
-            >
-              <MdInsights size={20} />
-               {t("my_progress")}
-            </button>
-          </div>
-        </aside>
-
-        {/* Content Area */}
-        <main style={{ flex: 1, minWidth: 0 }}>
-          
-          
-          
-          
-          {/* Destinations For You */}
-<section
-  style={{
-    marginBottom: "2rem",
+    width: isMobile ? "100%" : "320px",
+    flexShrink: 0,
     backgroundColor: colors.white,
     borderRadius: "16px",
-    boxShadow: colors.cardShadow,
     padding: "1.5rem",
+    boxShadow: colors.cardShadow,
   }}
 >
-  <h2
-    style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}
-  >
-    {t("Destinations you might like")}
-  </h2>
+  {/* Profile Picture */}
+  <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+    <img
+      src="/profile.jpg"
+      alt="portrait"
+      onClick={() => navigate("/edit-profile")}
+      style={{
+        width: "90px",
+        height: "90px",
+        borderRadius: "50%",
+        marginRight: "1rem",
+        objectFit: "cover",
+        cursor: "pointer",
+      }}
+    />
+    <div>
+      <h2 style={{ margin: 0, fontSize: "1.4rem", color: colors.green }}>
+        Wendy_1289
+      </h2>
+      <span style={{ fontSize: "0.95rem", color: "#666" }}>
+        {t("adventurer")}
+      </span>
+    </div>
+  </div>
 
+  {/* Bio */}
+  <p style={{ margin: "1rem 0", color: "#444", lineHeight: 1.5 }}>
+    Hi, I'm Wendy — explorer and storyteller sharing global travel
+    experiences. Expect sustainable travel tips, itineraries, and honest
+    reflections from the road.
+  </p>
+
+  {/* Quick facts */}
+  <div style={{ display: "grid", gap: "0.5rem", marginTop: "1rem" }}>
+    <div>
+      <strong>{t("hobbies")}:</strong> Hiking, Photography, Local Cuisine
+    </div>
+    <div>
+      <strong>Favorite place:</strong> Kyoto, Japan
+    </div>
+    <div>
+      <strong>Next destination:</strong> Iceland
+    </div>
+  </div>
+
+  {/* Stats */}
   <div
     style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-      gap: "1.2rem",
+      display: "flex",
+      gap: "1rem",
+      marginTop: "1rem",
+      fontWeight: "600",
+      color: "#333",
     }}
   >
-    {[
-      {
-        id: 1,
-        name: "Kyoto, Japan",
-        image: "/kyoto.jpg",
-        tagline: "Kyoto is a city full of temples, gardens, and timeless tradition. Perfect for travelers who love history and culture.",
-      },
-      {
-        id: 2,
-        name: "Cape Town, South Africa",
-        image: "/capetown.jpg",
-        tagline: "Cape Town offers stunning beaches, mountains, and vibrant culture. Great for adventurers and nature lovers.",
-      },
-      {
-        id: 3,
-        name: "Reykjavik, Iceland",
-        image: "/iceland.jpg",
-        tagline: "Reykjavik is the gateway to Iceland's glaciers, hot springs, and northern lights. Ideal for nature enthusiasts.",
-      },
-      {
-        id: 4,
-        name: "Bali, Indonesia",
-        image:
-          "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
-        tagline: "Bali has beautiful beaches, rice fields, and spiritual retreats. Perfect for relaxation and cultural exploration.",
-  },
-
-    ].map((dest) => (
-      
-      <div
-        key={dest.id}
-        onClick={() => navigate(`/destination/${dest.id}`)}
-        style={{
-          cursor: "pointer",
-          backgroundColor: colors.white,
-          borderRadius: "12px",
-          overflow: "hidden",
-          border: "1px solid #eee",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-2px)";
-          e.currentTarget.style.boxShadow =
-            "0 8px 16px rgba(0,0,0,0.12)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "none";
-          e.currentTarget.style.boxShadow = "none";
-        }}
-      >
-        {/* Destination Image */}
-        <div
-          style={{
-            height: "160px",
-            backgroundImage: `url(${dest.image})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-
-        {/* Destination Info */}
-        <div style={{ padding: "0.9rem" }}>
-          <h3 style={{ color: colors.brown, margin: 0 }}>{dest.name}</h3>
-          <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
-            {dest.tagline}
-          </p>
-        </div>
-      </div>
-    ))}
+    <span>{t("followers")}: 1280</span>
+    <span>{t("following")}: 245</span>
   </div>
-</section>
 
-
-          {/* Trending Blogs */}
-<section
-  style={{
-    backgroundColor: colors.white,
-    borderRadius: "16px",
-    boxShadow: colors.cardShadow,
-    padding: "1.5rem",
-  }}
->
-  <h2
-    style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}
+  {/* --------- BUTTON GROUP (now AFTER bio + facts + stats) --------- */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "12px",
+      marginTop: "20px",
+    }}
   >
-     {t("Trending Blogs")}
-  </h2>
+    <button
+      onClick={() => navigate("/rewards")}
+      style={sidebarButton(colors.green)}
+    >
+      <MdCardGiftcard size={20} />
+      {t("rewards")}
+    </button>
 
-  {/* Blog Data */}
-  {/*
-    You can edit these individually anytime.
-    Each one has: id, title, excerpt
-  */}
-  {(() => {
-    const blogs = [
-      {
-        id: 1,
-        title: "Backpacking Bangkok — My First Day",
-        excerpt: "Crazy tuk-tuks, night markets, and temples. Here's how my trip began!",
-      },
-      {
-        id: 2,
-        title: "How I Survived Solo Travel in Morocco",
-        excerpt: "Navigating souks, mint tea overload, and the Sahara desert...",
-      },
-      {
-        id: 3,
-        title: "Why Cape Town Stole My Heart",
-        excerpt: "Beaches, mountains, and the friendliest locals. A must-visit.",
-      },
-      {
-        id: 4,
-        title: "What Nobody Tells You About Iceland",
-        excerpt: "Blue lagoons, volcanoes, and the coldest wind of my life.",
-      },
-    ];
+    <button
+      onClick={() => navigate("/wishlist")}
+      style={sidebarButton("#3498db")}
+    >
+      <FaRegHeart size={18} />
+      {t("wishlist")}
+    </button>
 
-    return (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "1.2rem",
-        }}
-      >
-        {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            onClick={() => navigate(`/blog/${blog.id}`)}
+    <button
+      onClick={() => navigate("/travel-gallery")}
+      style={sidebarButton("#ff7eb9")}
+    >
+      <FaImages size={18} />
+      Travel Gallery
+    </button>
+
+    <button
+      onClick={() => navigate("/travel-map")}
+      style={sidebarButton(colors.yellow)}
+    >
+      <IoMdMap size={20} />
+      {t("Take the Quiz")}
+    </button>
+
+    <button
+      onClick={() => navigate("/progress")}
+      style={sidebarButton("#3b82f6")}
+    >
+      <MdInsights size={20} />
+      {t("my_progress")}
+    </button>
+  </div>
+</aside>
+
+
+        {/* MAIN CONTENT */}
+        <main style={{ flex: 1, minWidth: 0 }}>
+
+          {/* Destinations */}
+          <section
             style={{
-              cursor: "pointer",
+              marginBottom: "2rem",
               backgroundColor: colors.white,
-              borderRadius: "12px",
-              padding: "1rem",
-              border: "1px solid #eee",
-              transition: "transform 0.2s ease, box-shadow 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 16px rgba(0,0,0,0.12)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "none";
+              borderRadius: "16px",
+              boxShadow: colors.cardShadow,
+              padding: "1.5rem",
             }}
           >
-            <h3 style={{ color: colors.brown, margin: 0 }}>
-              {blog.title}
-            </h3>
+            <h2 style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}>
+              {t("Destinations you might like")}
+            </h2>
 
-            <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
-              {blog.excerpt}
-            </p>
-          </div>
-        ))}
-      </div>
-    );
-  })()}
-</section>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                gap: "1.2rem",
+              }}
+            >
+              {[
+                {
+                  id: 1,
+                  name: "Kyoto, Japan",
+                  image: "/kyoto.jpg",
+                  tagline:
+                    "Kyoto is a city full of temples, gardens, and timeless tradition.",
+                },
+                {
+                  id: 2,
+                  name: "Cape Town, South Africa",
+                  image: "/capetown.jpg",
+                  tagline:
+                    "Beaches, mountains, and vibrant culture — a paradise for adventurers.",
+                },
+                {
+                  id: 3,
+                  name: "Reykjavik, Iceland",
+                  image: "/iceland.jpg",
+                  tagline:
+                    "Home to glaciers, hot springs, and the northern lights.",
+                },
+                {
+                  id: 4,
+                  name: "Bali, Indonesia",
+                  image:
+                    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
+                  tagline:
+                    "Beautiful beaches, rice fields, and spiritual retreats.",
+                },
+              ].map((dest) => (
+                <div
+                  key={dest.id}
+                  onClick={() => navigate(`/destination/${dest.id}`)}
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: colors.white,
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    border: "1px solid #eee",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 16px rgba(0,0,0,0.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "none";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <div
+                    style={{
+                      height: "160px",
+                      backgroundImage: `url(${dest.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                  <div style={{ padding: "0.9rem" }}>
+                    <h3 style={{ color: colors.brown, margin: 0 }}>{dest.name}</h3>
+                    <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
+                      {dest.tagline}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
+          {/* Trending Blogs */}
+          <section
+            style={{
+              backgroundColor: colors.white,
+              borderRadius: "16px",
+              boxShadow: colors.cardShadow,
+              padding: "1.5rem",
+            }}
+          >
+            <h2 style={{ color: colors.green, marginBottom: "1rem", fontSize: "1.6rem" }}>
+              {t("Trending Blogs")}
+            </h2>
 
+            {(() => {
+              const blogs = [
+                {
+                  id: 1,
+                  title: "My Experience in Oceania",
+                  excerpt:
+                    "The most beautiful place on Earth! Here's how my trip began!",
+                },
+                {
+                  id: 2,
+                  title: "How I Survived Solo Travel in Morocco",
+                  excerpt:
+                    "Navigating souks, mint tea overload, and the Sahara desert...",
+                },
+                {
+                  id: 3,
+                  title: "Why Cape Town Stole My Heart",
+                  excerpt:
+                    "Beaches, mountains, and the friendliest locals. A must-visit.",
+                },
+                {
+                  id: 4,
+                  title: "What Nobody Tells You About Iceland",
+                  excerpt:
+                    "Blue lagoons, volcanoes, and the coldest wind of my life.",
+                },
+              ];
 
+              return (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                    gap: "1.2rem",
+                  }}
+                >
+                  {blogs.map((blog) => (
+                    <div
+                      key={blog.id}
+                      onClick={() => navigate(`/blog/${blog.id}`)}
+                      style={{
+                        cursor: "pointer",
+                        backgroundColor: colors.white,
+                        borderRadius: "12px",
+                        padding: "1rem",
+                        border: "1px solid #eee",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow =
+                          "0 8px 16px rgba(0,0,0,0.12)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "none";
+                        e.currentTarget.style.boxShadow = "none";
+                      }}
+                    >
+                      <h3 style={{ color: colors.brown, margin: 0 }}>
+                        {blog.title}
+                      </h3>
+                      <p style={{ color: "#444", margin: "0.4rem 0 0" }}>
+                        {blog.excerpt}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </section>
         </main>
       </div>
     </div>
@@ -519,5 +447,6 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
 
 

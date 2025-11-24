@@ -6,21 +6,24 @@ const Footer = () => {
 
   return (
     <footer
-      style={{
-        width: "100%",
-        backgroundColor: "#007f5f",
-        color: "#fff",
-        padding: "1rem 0",
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        display: "flex",
-        justifyContent: "center",
-        gap: "2rem",
-        fontFamily: "'Poppins', sans-serif",
-        zIndex: 1000,
-      }}
-    >
+  style={{
+    width: "100%",
+    backgroundColor: "#66c2daff",
+    color: "#fff",
+    padding: "0.5rem 0",
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "2rem",
+    fontFamily: "'Poppins', sans-serif",
+    zIndex: 200,
+    fontSize: "0.9rem",
+  }}
+>
+
       <span
         style={{ cursor: "pointer" }}
         onClick={() => navigate("/about")}
