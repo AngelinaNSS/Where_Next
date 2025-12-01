@@ -18,6 +18,8 @@ import LanguageFlags from "./components/LanguageFlags";
 import EditProfilePage from "./pages/EditProfilePage";
 import Footer from "./components/Footer";
 import TravelGalleryPage from "./pages/TravelGalleryPage";
+import TravelToolsPage from "./pages/TravelToolsPage";
+
 
 
 
@@ -47,11 +49,7 @@ function App() {
         <Route path="/languageflags" element={<LanguageFlags />} />
         <Route path="/edit-profile" element={<EditProfilePage />} />
         <Route path="/travel-gallery" element={<TravelGalleryPage />} />
-
-
-
-        
-
+        <Route path="/travel-tools" element={<TravelToolsPage />} />
 
 
       </Routes>

@@ -51,12 +51,13 @@ than a threat. The underwater world was magical and serene.
 
   "2": {
     name: "Liam Carter",
-    heroImage: "/yosemite-hero.jpg",
+    heroImage: "/yosemite3.jpg",
     bio: "Solo traveler exploring Yosemite National Park with a focus on nature, hiking, and hidden viewpoints.",
     tips: [
       "Start your hikes early to catch sunrise views.",
       "Bring plenty of water and snacks for long trails.",
-      "Respect wildlife and keep the park clean."
+      "Respect wildlife.",
+      "Keep the park clean.",
     ],
     story: `
 Yosemite is awe-inspiring. From the towering granite cliffs to the serene valleys, every corner of the park has a story to tell. I spent my mornings hiking, afternoons photographing waterfalls, and evenings simply breathing in the crisp mountain air.
@@ -64,7 +65,7 @@ Yosemite is awe-inspiring. From the towering granite cliffs to the serene valley
     sections: [
       {
         title: "Sunrise at Glacier Point",
-        image: "/yosemite1.jpg",
+        image: "/yosemite.jpg",
         text: `
 I arrived just before sunrise at Glacier Point. The valley below was bathed 
 in golden light, and the iconic Half Dome looked majestic. The peaceful silence 
@@ -82,7 +83,7 @@ made me feel both humbled and exhilarated.
       },
       {
         title: "Hiking to Vernal Fall",
-        image: "/yosemite3.jpg",
+        image: "/yosemite4.jpg",
         text: `
 The trail to Vernal Fall was challenging but rewarding. The mist from the 
 waterfall cooled my face, and the rainbow that appeared was pure magic. 
@@ -94,7 +95,7 @@ Every step reminded me why Yosemite is a nature lover's paradise.
 
   "3": {
     name: "Ayla Moreno",
-    heroImage: "/egypt-hero.jpg",
+    heroImage: "/egypt2 copy.jpg",
     bio: "Travel enthusiast exploring Egypt’s ancient wonders and desert landscapes.",
     tips: [
       "Carry water and sunscreen at all times.",
@@ -107,21 +108,21 @@ Egypt is a land of timeless history and breathtaking monuments. From the Pyramid
     sections: [
       {
         title: "The Pyramids of Giza",
-        image: "/egypt1.jpg",
+        image: "/egypt2.jpg",
         text: `
 Seeing the Pyramids up close was surreal. The scale and precision of these ancient wonders left me in awe. Walking around the Sphinx added an extra sense of mystery and reverence to the experience.
         `
       },
       {
         title: "Cruising the Nile",
-        image: "/egypt2.jpg",
+        image: "/egypt4.jpg",
         text: `
 A boat ride along the Nile offered calm waters, stunning views, and a glimpse into daily Egyptian life. I watched the sunset paint the sky over ancient temples along the riverbank.
         `
       },
       {
         title: "Desert Adventure in the Sahara",
-        image: "/egypt3.jpg",
+        image: "/egypt5.jpg",
         text: `
 Riding a camel through the desert dunes was unforgettable. The endless sand, quiet winds, and star-filled nights made me feel both small and part of something vast and eternal.
         `
@@ -131,7 +132,7 @@ Riding a camel through the desert dunes was unforgettable. The endless sand, qui
 
   "4": {
     name: "Kai Tanaka",
-    heroImage: "/srilanka-hero.jpg",
+    heroImage: "/srilanka5.jpg",
     bio: "Explorer discovering Sri Lanka’s lush landscapes, wildlife, and cultural treasures.",
     tips: [
       "Take local trains for scenic journeys.",
@@ -144,14 +145,14 @@ Sri Lanka is vibrant and diverse. From misty tea plantations to golden beaches, 
     sections: [
       {
         title: "Tea Plantations in Nuwara Eliya",
-        image: "/srilanka1.jpg",
+        image: "/srilanka4.jpg",
         text: `
 Walking through the green tea fields, I felt at peace. The rolling hills, fresh air, and serene environment were a perfect escape from the city.
         `
       },
       {
         title: "Temple Hopping in Kandy",
-        image: "/srilanka2.jpg",
+        image: "/srilanka.jpg",
         text: `
 Visiting the Temple of the Tooth and other cultural sites gave me insight into Sri Lanka’s deep spiritual heritage. The architecture and rituals were mesmerizing.
         `
