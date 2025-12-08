@@ -4,6 +4,16 @@ import { useNavigate } from "react-router-dom";
 const TravelGalleryPage = () => {
   const navigate = useNavigate();
 
+  const colors = {
+    bg: "linear-gradient(180deg, #fff7fb 0%, #f7fff9 100%)",
+    text: "#2c2c2c",
+    card: "#ffffff",
+    accent: "#FF9DB7",
+    accent2: "#9DE6E6",
+    accent3: "#FFD7A6",
+    green: "#2b6048",
+    softShadow: "0 10px 30px rgba(50,50,93,0.08)",
+  };
 
   const photos = [
     "/maldives.jpg",
@@ -16,19 +26,18 @@ const TravelGalleryPage = () => {
     "/iceland4.jpg",
     "/egypt.jpg",
     "/egypt2.jpg",
-];
+  ];
 
-
-  const getRotation = () => Math.random() * 10 - 5; 
+  const getRotation = () => Math.random() * 6 - 3; // slight rotation
 
   return (
     <div
       style={{
         minHeight: "100vh",
         width: "100vw",
-        padding: "2rem",
-        background: "linear-gradient(135deg, #baf3f0ff, #94dfe7ff, #4dd0e1, #00acc1)", 
-        fontFamily: "'Poppins', sans-serif",
+        padding: "2.4rem 1rem",
+        background: colors.bg,
+        fontFamily: "'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
         boxSizing: "border-box",
       }}
     >
@@ -37,15 +46,15 @@ const TravelGalleryPage = () => {
         onClick={() => navigate(-1)}
         style={{
           marginBottom: "1.5rem",
-          padding: "8px 14px",
-          backgroundColor: "#fff",
-          color: "#333",
+          padding: "0.6rem 1rem",
+          background: `linear-gradient(90deg, ${colors.accent2}, ${colors.accent})`,
+          color: "#fff",
           border: "none",
-          borderRadius: "8px",
+          borderRadius: "999px",
           cursor: "pointer",
-          fontWeight: "600",
-          boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-          transition: "0.2s",
+          fontWeight: 600,
+          boxShadow: "0 8px 20px rgba(157,230,230,0.14)",
+          transition: "transform 0.2s",
         }}
         onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
         onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
@@ -59,8 +68,8 @@ const TravelGalleryPage = () => {
           textAlign: "center",
           marginBottom: "2rem",
           fontSize: "2.2rem",
-          color: "#004d66",
-          textShadow: "1px 1px 4px rgba(0,0,0,0.2)",
+          color: colors.green,
+          textShadow: "1px 1px 4px rgba(0,0,0,0.1)",
         }}
       >
         My Travel Gallery
@@ -77,17 +86,17 @@ const TravelGalleryPage = () => {
           const rotation = getRotation();
           return (
             <div
-              key={index}
+              key={photo}
               style={{
                 breakInside: "avoid",
                 marginBottom: "12px",
-                borderRadius: "16px",
+                borderRadius: "18px",
                 overflow: "hidden",
                 transform: `rotate(${rotation}deg)`,
                 transition: "transform 0.3s",
                 cursor: "pointer",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-                border: "4px solid rgba(173, 216, 230, 0.5)", 
+                boxShadow: colors.softShadow,
+                border: `2px solid rgba(157,230,230,0.3)`,
               }}
               onMouseOver={(e) =>
                 (e.currentTarget.style.transform = "scale(1.05)")
@@ -123,4 +132,5 @@ const TravelGalleryPage = () => {
 };
 
 export default TravelGalleryPage;
+
 

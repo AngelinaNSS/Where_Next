@@ -1,388 +1,505 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { GiAirplaneDeparture } from "react-icons/gi";
-import { FaSuitcaseRolling, FaMoneyBillWave } from "react-icons/fa";
-import { MdSecurity } from "react-icons/md";
 
-const TravelToolsPage = () => {
+const AIDestinationAdvisor = () => {
   const navigate = useNavigate();
 
-  // Pastel color palette for "Cute Travel Theme"
+  
   const colors = {
     bg: "linear-gradient(180deg, #fff7fb 0%, #f7fff9 100%)",
     text: "#2c2c2c",
     card: "#ffffff",
-    accent: "#FF9DB7", // pink
-    accent2: "#9DE6E6", // aqua
-    accent3: "#FFD7A6", // warm yellow
+    accent: "#FF9DB7",
+    accent2: "#9DE6E6",
+    green: "#2b6048",
     softShadow: "0 8px 24px rgba(50,50,93,0.08)",
   };
 
-  const [budget, setBudget] = useState({
-    flights: "",
-    stay: "",
-    food: "",
-    activities: "",
-  });
+  const WEATHER_KEY = "cd728caae961ef1ea9cc6168cfd0c1d5";
 
-  const totalBudget =
-    Number(budget.flights || 0) +
-    Number(budget.stay || 0) +
-    Number(budget.food || 0) +
-    Number(budget.activities || 0);
+  const [query, setQuery] = useState("");
+  const [searchTriggered, setSearchTriggered] = useState(false);
 
-  // PACKING LIST
-  const packing_items = [
-    "Passport",
-    "Charger",
-    "Toiletries",
-    "Comfortable Shoes",
-    "Travel Pillow",
-    "Camera",
-    "Water Bottle",
-    "Snacks",
-    "Sunscreen",
+  // countdown 
+  const [tripDate, setTripDate] = useState("");
+  const [countdown, setCountdown] = useState("");
+
+  // main results
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+
+  // packing checklist
+  const [newItem, setNewItem] = useState("");
+  const [checklist, setChecklist] = useState([]);
+
+  // the fake avatars
+  const cuteAvatars = [
+    "/avatar1.png",
+    "/avatar2.png",
+    "/avatar3.png",
+    "/avatar4.png",
+    "/avatar5.png",
   ];
 
-  const [checkedItems, setCheckedItems] = useState([]);
+  const fakePackingTips = [
+    "Bring cash — small shops may not accept cards.",
+    "Carry a portable fan; it gets warm quickly!",
+    "Imodium + nausea tablets (life-saving).",
+    "Pack electrolytes for long walking days.",
+    "Comfortable sandals are essential.",
+    "Double sunscreen — you’ll need it.",
+    "Hydrate frequently, especially midday.",
+  ];
 
-  const toggleItem = (item) => {
-    setCheckedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-    );
+  // -------------------------
+  // Trip countdown
+  // -------------------------
+  useEffect(() => {
+    if (!tripDate) return;
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const travel = new Date(tripDate);
+      const diff = travel - now;
+
+      if (diff <= 0) {
+        setCountdown("Your trip is today! 🎉");
+        clearInterval(interval);
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+
+      setCountdown(`${days} days, ${hours} hours, ${mins} minutes`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [tripDate]);
+
+  // -----------------------------------
+  // WEATHER 
+  // -----------------------------------
+  const getCoordinates = async (place) => {
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${place}&limit=1&appid=${WEATHER_KEY}`
+      );
+      const data = await res.json();
+      if (!data[0]) return null;
+      return { lat: data[0].lat, lon: data[0].lon };
+    } catch {
+      return null;
+    }
   };
 
+  const getWeather = async (lat, lon) => {
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&appid=${WEATHER_KEY}`
+      );
+      const data = await res.json();
+      return data.daily.slice(0, 7).map((d) => ({
+        temp: Math.round(d.temp.day),
+        desc: d.weather[0].description,
+        icon: d.weather[0].icon,
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  // -----------------------------------
+  // MOCK AI DATA (replace later)
+  // -----------------------------------
+  const getAIData = (place) => {
+    return {
+      itinerary: [
+        "Explore the historic district & morning cafés",
+        "Lunch at a local gem",
+        "Visit top viewpoints",
+        "Discover hidden areas",
+        "Evening markets & nightlife",
+      ],
+      bestAreas: ["Old Town", "City Center", "Harbor District"],
+      food: ["Street dumplings", "Seafood bowls", "Local desserts"],
+      budget: {
+        low: "€40–€70/day",
+        mid: "€90–€150/day",
+        high: "€200–€400/day",
+      },
+    };
+  };
+
+  // -----------------------------------
+  // MAIN SEARCH
+  // -----------------------------------
+  const handleSearch = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    setSearchTriggered(true);
+
+    const coords = await getCoordinates(query);
+    if (!coords) {
+      setResult({ error: "Destination not found" });
+      setLoading(false);
+      return;
+    }
+
+    const weather = await getWeather(coords.lat, coords.lon);
+    const ai = getAIData(query);
+
+    //checklist for storage for this specific country
+    const savedList =
+      JSON.parse(localStorage.getItem(`packing_${query.trim()}`)) || [];
+
+    setChecklist(savedList);
+
+    setResult({ ...ai, weather, name: query.trim() });
+    setLoading(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
+  // -----------------------------------
+  // CHECKLIST FUNCTIONS
+  // -----------------------------------
+  const addChecklistItem = () => {
+    if (!newItem.trim()) return;
+    const updated = [...checklist, { text: newItem, done: false }];
+    setChecklist(updated);
+    setNewItem("");
+    localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated));
+  };
+
+  const toggleChecklistItem = (i) => {
+    const updated = [...checklist];
+    updated[i].done = !updated[i].done;
+    setChecklist(updated);
+    localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated));
+  };
+
+  const removeChecklistItem = (i) => {
+    const updated = checklist.filter((_, idx) => idx !== i);
+    setChecklist(updated);
+    localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated));
+  };
+
+  // -----------------------------------
+  // UI
+  // -----------------------------------
   return (
     <>
-      {/* Embedded CSS so this file is plug-and-play */}
       <style>{`
-        :root{
-          --bg-accent: #fff7fb;
-          --card-radius: 18px;
-          --gap: 1.25rem;
-        }
-
-        .ttp-root{
-          min-height: 100vh;
+        .root {
           background: ${colors.bg};
-          padding: 3rem 1.25rem;
-          font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-          color: ${colors.text};
-        }
-
-        /* Centered container so content doesn't hug the left */
-        .ttp-container{
-          max-width: 1200px;
-          margin: 0 auto;
+          min-height: 100vh;
+          padding: 2rem;
           width: 100%;
         }
-
-        .ttp-hero{
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap: 1rem;
-          margin-bottom: 1.6rem;
-        }
-
-        .ttp-title{
-          display:flex;
-          flex-direction:column;
-          gap:6px;
-        }
-        .ttp-title h1{
-          margin:0;
-          font-size: 1.9rem;
-          color: #2c2c2c;
-          letter-spacing: -0.2px;
-        }
-        .ttp-sub{
-          margin:0;
-          color:#6b6b6b;
-          font-size:0.95rem;
-        }
-
-        .ttp-back{
-          background: linear-gradient(90deg, ${colors.accent}, ${colors.accent2});
-          border: none;
-          color: white;
-          padding: 0.6rem 0.9rem;
-          border-radius: 999px;
-          font-weight:600;
-          box-shadow: 0 6px 18px rgba(157, 230, 230, 0.18);
-          cursor:pointer;
-          transition: transform .18s ease, box-shadow .18s ease;
-        }
-        .ttp-back:hover{ transform: translateY(-3px); box-shadow: 0 10px 24px rgba(157, 230, 230, 0.25) }
-
-        /* Grid layout with nicer spacing */
-        .tt-grid{
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: var(--gap);
-        }
-
-        /* Cards */
-        .tt-card{
+        .card {
           background: ${colors.card};
-          border-radius: var(--card-radius);
-          padding: 1.25rem;
+          border-radius: 2px;
+          padding: 2.4rem;
           box-shadow: ${colors.softShadow};
-          transition: transform .18s ease, box-shadow .18s ease;
-          border: 1px solid rgba(200,200,200,0.08);
+          border: 1px solid rgba(0,0,0,0.05);
         }
-        .tt-card:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(50,50,93,0.08); }
-
-        .tt-card h2{
-          margin:0 0 .85rem 0;
-          display:flex;
-          align-items:center;
-          gap:10px;
-          font-size:1.05rem;
-          color:#3b3b3b;
-        }
-
-        /* Inputs */
-        .tt-input{
-          width:100%;
-          padding: .6rem .8rem;
-          border-radius: 12px;
-          border: 1px solid rgba(0,0,0,0.08);
-          outline:none;
-          font-size: 0.95rem;
-        }
-
-        /* Packing list */
-        .tt-list{
-          list-style:none;
-          padding:0;
-          margin:0;
-          display:flex;
-          flex-direction:column;
-          gap:10px;
-        }
-        .tt-list label{
-          display:flex;
-          align-items:center;
-          gap:10px;
-          user-select:none;
-        }
-
-        /* Currency card special */
-        .tt-currency-note{
-          margin-top: .6rem;
-          color:#666;
-          font-size:0.95rem;
-          line-height:1.4;
-        }
-
-        /* Best time bar */
-        .tt-best{
-          margin-top:1.6rem;
-          display:flex;
-          gap:.9rem;
-          align-items:center;
-        }
-        .tt-best .badge{
-          background: linear-gradient(180deg, ${colors.accent3}, #fff2dc);
-          padding:.8rem 1rem;
-          border-radius:12px;
-          box-shadow: 0 8px 20px rgba(255,215,170,0.12);
-          flex:1;
-        }
-
-        /* Responsive: single column on small screens */
-        @media (max-width: 880px){
-          .tt-grid{ grid-template-columns: 1fr; }
-          .ttp-hero{ flex-direction:column; align-items:flex-start; gap:.6rem }
-        }
-
-        /* Cute small animated pin at top-right of hero */
-        .cute-pin{
-          width:46px;
-          height:46px;
-          border-radius:50%;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          background: linear-gradient(135deg, ${colors.accent}, ${colors.accent2});
-          box-shadow: 0 8px 20px rgba(150,120,160,0.12);
-          transform-origin:center;
-          animation: floaty 4s ease-in-out infinite;
-        }
-        @keyframes floaty{
-          0% { transform: translateY(0); }
-          50% { transform: translateY(-8px) rotate(-6deg); }
-          100% { transform: translateY(0); }
-        }
-
-        .total-pill{
-          display:inline-block;
-          padding:8px 12px;
-          background: linear-gradient(90deg, rgba(157,157,230,0.08), rgba(255,157,183,0.06));
-          border-radius:999px;
-          font-weight:700;
-          color:#2c2c2c;
+        .sectionTitle {
+          margin-top: 0;
+          margin-bottom: 0.7rem;
+          color: ${colors.green};
         }
       `}</style>
 
-      <div className="ttp-root">
-        <div className="ttp-container">
-          {/* HERO */}
-          <div className="ttp-hero">
-            <div className="ttp-title">
-              <h1>Travel Tools & Tips</h1>
-              <p className="ttp-sub">Cute, pastel helpers for your next trip — calculators, packing lists and quick tips.</p>
-            </div>
-
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <button className="ttp-back" onClick={() => navigate(-1)}>Back</button>
-
-              {/* little floating pin */}
-              <div className="cute-pin" title="Where Next">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#fff" />
-                  <circle cx="12" cy="9" r="2.5" fill="#FF9DB7"/>
-                </svg>
-              </div>
-            </div>
+      <div className="root">
+        {/* HEADER */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2rem" }}>
+          <div>
+            <h1 style={{ margin: 0, color: colors.green }}> Destination Advisor</h1>
+            <p style={{ margin: 0, color: "#666" }}>Plan smarter. Travel brighter.</p>
           </div>
+          <button className="btn" onClick={() => navigate(-1)}>Back</button>
+        </div>
 
-          {/* GRID */}
-          <div className="tt-grid">
-            {/* Budget Calculator */}
-            <div className="tt-card" style={{ background: "linear-gradient(180deg, #ffffff, #fff8fb)" }}>
-              <h2><GiAirplaneDeparture size={20} /> Budget Calculator</h2>
+        {/* COUNTDOWN */}
+        <div className="card" style={{ marginBottom: "1.5rem" }}>
+          <h3 className="sectionTitle">Your Trip Countdown</h3>
 
-              <div style={{ display: "grid", gap: 10 }}>
-                {["flights", "stay", "food", "activities"].map((field) => (
-                  <input
-                    key={field}
-                    type="number"
-                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                    value={budget[field]}
-                    onChange={(e) =>
-                      setBudget({ ...budget, [field]: e.target.value })
-                    }
-                    className="tt-input"
-                  />
-                ))}
-              </div>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <input
+              type="date"
+              value={tripDate}
+              onChange={(e) => setTripDate(e.target.value)}
+              style={{
+                padding: "0.8rem",
+                borderRadius: "12px",
+                border: "1px solid #ddd",
+                flex: 1,
+              }}
+            />
 
-              <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ color: "#6b6b6b", fontWeight: 600 }}>Estimated Total</div>
-                <div className="total-pill">€{totalBudget}</div>
-              </div>
-            </div>
-
-            {/* Packing Checklist */}
-            <div className="tt-card" style={{ background: "linear-gradient(180deg,#ffffff,#f8fff9)" }}>
-              <h2><FaSuitcaseRolling size={20} /> Packing Checklist</h2>
-
-              <ul className="tt-list" style={{ marginTop: 6 }}>
-                {packing_items.map((item) => (
-                  <li key={item}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={checkedItems.includes(item)}
-                        onChange={() => toggleItem(item)}
-                        style={{ width: 16, height: 16, accentColor: "#FF9DB7" }}
-                      />
-                      <span style={{ marginLeft: 6 }}>{item}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-
-              <div style={{ marginTop: 12, display: "flex", gap: 8, alignItems: "center" }}>
-                <button
-                  onClick={() => setCheckedItems(packing_items)}
-                  style={{
-                    background: "transparent",
-                    border: "1px dashed rgba(0,0,0,0.06)",
-                    padding: "8px 10px",
-                    borderRadius: 999,
-                    fontSize: 13,
-                    cursor: "pointer"
-                  }}
-                >
-                  Check all
-                </button>
-                <button
-                  onClick={() => setCheckedItems([])}
-                  style={{
-                    background: "transparent",
-                    border: "1px dashed rgba(0,0,0,0.06)",
-                    padding: "8px 10px",
-                    borderRadius: 999,
-                    fontSize: 13,
-                    cursor: "pointer"
-                  }}
-                >
-                  Clear
-                </button>
-              </div>
-            </div>
-
-            {/* Currency Converter */}
-            <div className="tt-card" style={{ background: "linear-gradient(180deg,#ffffff,#fffaf3)" }}>
-              <h2><FaMoneyBillWave size={20} /> Currency Converter</h2>
-
-              <p className="tt-currency-note">
-                Static demo rates — for production you can plug in an API (ex: exchangerate.host).
-              </p>
-
-              <div style={{ marginTop: 10, display: "grid", gap: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>1 EUR</div>
-                  <div style={{ fontWeight: 700 }}>≈ 1.07 USD</div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>1 EUR</div>
-                  <div style={{ fontWeight: 700 }}>≈ 160 JPY</div>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>1 EUR</div>
-                  <div style={{ fontWeight: 700 }}>≈ 18 ZAR</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Safety Tips */}
-            <div className="tt-card" style={{ background: "linear-gradient(180deg,#ffffff,#f7f9ff)" }}>
-              <h2><MdSecurity size={20} /> Safety Tips</h2>
-
-              <ul style={{ marginTop: 10, lineHeight: 1.6, color: "#555" }}>
-                <li>Keep digital copies of all important documents.</li>
-                <li>Avoid showing valuables in public places.</li>
-                <li>Research local emergency numbers.</li>
-                <li>Learn basic phrases in the local language.</li>
-                <li>Stay aware of your surroundings.</li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Best time to visit (cute badges) */}
-          <div className="tt-best">
-            <div className="badge tt-card" style={{ flex: 1 }}>
-              <strong>Bali</strong>
-              <div style={{ color: "#666", marginTop: 6 }}>Best: April — October</div>
-            </div>
-            <div className="badge tt-card" style={{ flex: 1 }}>
-              <strong>Iceland</strong>
-              <div style={{ color: "#666", marginTop: 6 }}>Best: Sep — Mar (Auroras)</div>
-            </div>
-            <div className="badge tt-card" style={{ flex: 1 }}>
-              <strong>Japan</strong>
-              <div style={{ color: "#666", marginTop: 6 }}>Best: Mar — May (Sakura)</div>
+            <div
+              style={{
+                padding: "0.8rem 1rem",
+                background: colors.accent,
+                color: "white",
+                borderRadius: "12px",
+                minWidth: "180px",
+                textAlign: "center",
+              }}
+            >
+              {countdown || "Pick a date"}
             </div>
           </div>
         </div>
+
+        {/* SEARCH BAR */}
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+          <input
+            className="input"
+            placeholder="Search any city or country..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            style={{
+              flex: 1,
+              padding: "0.9rem",
+              borderRadius: "12px",
+              border: "1px solid #ddd",
+            }}
+          />
+          <button
+            onClick={handleSearch}
+            style={{
+              padding: "0.9rem 1.2rem",
+              borderRadius: "12px",
+              background: `linear-gradient(90deg, ${colors.accent2}, ${colors.accent})`,
+              color: "white",
+              border: "none",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Search
+          </button>
+        </div>
+
+        {loading && <p>Loading travel insights...</p>}
+
+        {/* RESULTS */}
+        {result && !result.error && !loading && (
+          <>
+            {/* ***** GRID LAYOUT ***** */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr",
+                gap: "1.5rem",
+                alignItems: "start",
+              }}
+            >
+              {/* LEFT SIDE — main info*/}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                {/* WEATHER */}
+                <div className="card">
+                  <h3 className="sectionTitle">Weather in {result.name}</h3>
+                  {result.weather.map((w, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        gap: "1rem",
+                        alignItems: "center",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      <img
+                        src={`https://openweathermap.org/img/wn/${w.icon}.png`}
+                        width="40"
+                        alt=""
+                      />
+                      <div>
+                        <strong>{w.temp}°C</strong> — {w.desc}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ITINERARY */}
+                <div className="card">
+                  <h3 className="sectionTitle">Suggested Itinerary</h3>
+                  <ul>
+                    {result.itinerary.map((it, idx) => (
+                      <li key={idx}>{it}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* BEST AREAS */}
+                <div className="card">
+                  <h3 className="sectionTitle">Best Areas to Stay</h3>
+                  <ul>
+                    {result.bestAreas.map((b, idx) => (
+                      <li key={idx}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* FOOD */}
+                <div className="card">
+                  <h3 className="sectionTitle">Local Foods You Must Try</h3>
+                  <ul>
+                    {result.food.map((f, idx) => (
+                      <li key={idx}>{f}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* BUDGET */}
+                <div className="card">
+                  <h3 className="sectionTitle">Budget Estimates</h3>
+                  <p><strong>Low:</strong> {result.budget.low}</p>
+                  <p><strong>Mid-range:</strong> {result.budget.mid}</p>
+                  <p><strong>Luxury:</strong> {result.budget.high}</p>
+                </div>
+              </div>
+
+              {/* RIGHT SIDE — fake accounts + packing checklist */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+
+                {/* FAKE ACCOUNTS */}
+                <div className="card">
+                  <h3 className="sectionTitle">Traveler Tips</h3>
+
+                  {[...Array(3)].map((_, idx) => {
+                    const randomAvatar =
+                      cuteAvatars[Math.floor(Math.random() * cuteAvatars.length)];
+                    const tip =
+                      fakePackingTips[
+                        Math.floor(Math.random() * fakePackingTips.length)
+                      ];
+
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          display: "flex",
+                          gap: "1rem",
+                          marginBottom: "1rem",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={randomAvatar}
+                          width="50"
+                          height="50"
+                          style={{
+                            borderRadius: "50%",
+                            background: "#fdd",
+                            padding: "4px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <div>
+                          <strong>Traveler #{idx + 1}</strong>
+                          <p style={{ margin: 0 }}>{tip}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* PACKING CHECKLIST */}
+                <div className="card">
+                  <h3 className="sectionTitle">Your Packing Checklist</h3>
+
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <input
+                      value={newItem}
+                      onChange={(e) => setNewItem(e.target.value)}
+                      placeholder="Add item..."
+                      style={{
+                        flex: 1,
+                        padding: "0.8rem",
+                        borderRadius: "12px",
+                        border: "1px solid #ddd",
+                      }}
+                    />
+                    <button
+                      onClick={addChecklistItem}
+                      style={{
+                        padding: "0.8rem 1rem",
+                        borderRadius: "12px",
+                        background: colors.accent,
+                        color: "white",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <ul style={{ paddingLeft: "1.1rem", marginTop: "1rem" }}>
+                    {checklist.map((item, idx) => (
+                      <li
+                        key={idx}
+                        style={{
+                          marginBottom: "0.7rem",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={item.done}
+                          onChange={() => toggleChecklistItem(idx)}
+                        />
+                        <span
+                          style={{
+                            textDecoration: item.done ? "line-through" : "none",
+                          }}
+                        >
+                          {item.text}
+                        </span>
+                        <button
+                          onClick={() => removeChecklistItem(idx)}
+                          style={{
+                            marginLeft: "auto",
+                            background: "transparent",
+                            border: "none",
+                            color: "#d44",
+                            cursor: "pointer",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ERROR */}
+        {result?.error && (
+          <p style={{ color: "red", marginTop: "2rem" }}>{result.error}</p>
+        )}
       </div>
     </>
   );
 };
 
-export default TravelToolsPage;
+export default AIDestinationAdvisor;
+
+
+
+
 

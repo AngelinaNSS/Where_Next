@@ -323,56 +323,119 @@ const ProfilePage = () => {
 
             {/* MAIN CONTENT */}
             <main className="pp-main">
-              {/* DESTINATIONS */}
-              <section className="pp-card">
-                <h2 style={{ color: colors.accentAqua, marginBottom: 12 }}>{t("Destinations you might like")}</h2>
+              
+              {/* MY BLOGS SECTION */}
+<section className="pp-card">
+  <div style={{ 
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12
+  }}>
+    <h2 style={{ color: colors.accentAqua }}>{t("My Blogs")}</h2>
 
-                <div className="grid-dests">
-                  {[
-                    {
-                      id: 1,
-                      name: "Kyoto, Japan",
-                      image: "/kyoto.jpg",
-                      tagline:
-                        "Kyoto is a city full of temples, gardens, and timeless tradition.",
-                    },
-                    {
-                      id: 2,
-                      name: "Cape Town, South Africa",
-                      image: "/capetown.jpg",
-                      tagline:
-                        "Beaches, mountains, and vibrant culture — a paradise for adventurers.",
-                    },
-                    {
-                      id: 3,
-                      name: "Reykjavik, Iceland",
-                      image: "/iceland.jpg",
-                      tagline:
-                        "Home to glaciers, hot springs, and the northern lights.",
-                    },
-                    {
-                      id: 4,
-                      name: "Bali, Indonesia",
-                      image:
-                        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
-                      tagline:
-                        "Beautiful beaches, rice fields, and spiritual retreats.",
-                    },
-                  ].map((dest) => (
-                    <div
-                      key={dest.id}
-                      className="dest-card"
-                      onClick={() => navigate(`/destination/${dest.id}`)}
-                    >
-                      <div className="dest-image" style={{ backgroundImage: `url(${dest.image})` }} />
-                      <div style={{ padding: 12 }}>
-                        <h3 style={{ margin: 0, color: colors.brown }}>{dest.name}</h3>
-                        <p style={{ margin: "6px 0 0", color: "#444", fontSize: 14 }}>{dest.tagline}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+    {/* Create new blog button */}
+    <button
+      onClick={() => navigate("/create-blog")}
+      style={{
+        padding: ".6rem 1rem",
+        borderRadius: "10px",
+        background: `linear-gradient(90deg, ${colors.accentAqua}, ${colors.accentPink})`,
+        color: "#fff",
+        fontWeight: "600",
+        border: "none",
+        cursor: "pointer",
+        boxShadow: "0 8px 20px rgba(157,230,230,0.20)"
+      }}
+    >
+      + Create Blog
+    </button>
+  </div>
+
+  {/* MY BLOGS */}
+  <div className="grid-dests">
+
+    {[
+      {
+        id: 1,
+        title: "My Kyoto Adventure",
+        image: "/kyoto.jpg",
+        description: "Temples, tea houses, cherry blossoms…",
+      },
+      {
+        id: 2,
+        title: "Cape Town Memories",
+        image: "/capetown.jpg",
+        description: "Hiking Table Mountain + penguin beaches!",
+      },
+      {
+        id: 3,
+        title: "Iceland Roadtrip",
+        image: "/iceland.jpg",
+        description: "Waterfalls, geysers, hot springs & volcanoes.",
+      },
+      {
+        id: 4,
+        title: "Bali Wellness Escape",
+        image:
+          "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
+        description: "Rice terraces, beaches & peaceful mornings.",
+      },
+    ].map((blog) => (
+      <div
+        key={blog.id}
+        className="dest-card"
+        onClick={() => navigate(`/my-blog/${blog.id}`)}
+
+      >
+        <div
+          className="dest-image"
+          style={{ backgroundImage: `url(${blog.image})` }}
+        />
+
+        <div style={{ padding: 12 }}>
+          <h3 style={{ margin: 0, color: colors.brown }}>{blog.title}</h3>
+          <p style={{ marginTop: 6, color: "#444", fontSize: 14 }}>
+            {blog.description}
+          </p>
+
+          {/* Likes + Edit */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center", 
+            marginTop: 8 
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <FaRegHeart size={16} color={colors.accentPink} />
+              <span style={{ fontSize: 14, color: "#444" }}>128</span>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/edit-blog/${blog.id}`);
+              }}
+              style={{
+                padding: ".3rem .6rem",
+                fontSize: "0.8rem",
+                background: colors.accentYellow,
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                cursor: "pointer",
+                fontWeight: "600",
+              }}
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
 
               {/* TRENDING BLOGS */}
               <section className="pp-card">
@@ -421,7 +484,7 @@ const ProfilePage = () => {
                 </div>
               </section>
 
-              {/* ⭐⭐⭐ ADDED "NEXT" BUTTON (styled) — same location as before */}
+              {/* NEXT BUTTON */}
               <div className="next-button-wrap">
                 <button className="next-button" onClick={() => navigate("/travel-tools")}>Next →</button>
               </div>

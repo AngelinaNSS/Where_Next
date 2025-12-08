@@ -19,9 +19,7 @@ import EditProfilePage from "./pages/EditProfilePage";
 import Footer from "./components/Footer";
 import TravelGalleryPage from "./pages/TravelGalleryPage";
 import TravelToolsPage from "./pages/TravelToolsPage";
-
-
-
+import MyBlogPage from "./pages/MyBlogPage";
 
 
 
@@ -50,6 +48,8 @@ function App() {
         <Route path="/edit-profile" element={<EditProfilePage />} />
         <Route path="/travel-gallery" element={<TravelGalleryPage />} />
         <Route path="/travel-tools" element={<TravelToolsPage />} />
+        <Route path="/my-blog/:id" element={<MyBlogPage />} />
+
 
 
       </Routes>

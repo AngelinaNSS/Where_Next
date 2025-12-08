@@ -6,38 +6,41 @@ const Footer = () => {
 
   return (
     <footer
-  style={{
-    width: "100%",
-    backgroundColor: "#66c2daff",
-    color: "#fff",
-    padding: "0.5rem 0",
-    position: "fixed",
-    bottom: 0,
-    left: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "2rem",
-    fontFamily: "'Poppins', sans-serif",
-    zIndex: 200,
-    fontSize: "0.9rem",
-  }}
->
-
-      <span
-        style={{ cursor: "pointer" }}
-        onClick={() => navigate("/about")}
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        backgroundColor: "#66c2daff",
+        color: "#fff",
+        padding: "0.6rem 0",
+        display: "flex",
+        justifyContent: "center",
+        fontFamily: "'Poppins', sans-serif",
+        zIndex: 200,
+        fontSize: "0.9rem",
+        overflow: "hidden",        // ⬅ prevents stretching
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          gap: "2rem",
+          maxWidth: "500px",       // ⬅ CONTENT will never stretch the footer
+          width: "100%",
+          justifyContent: "center",
+        }}
       >
-        About Us
-      </span>
-      <span
-        style={{ cursor: "pointer" }}
-        onClick={() => navigate("/settings")}
-      >
-        Settings
-      </span>
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/about")}>
+          About Us
+        </span>
+        <span style={{ cursor: "pointer" }} onClick={() => navigate("/settings")}>
+          Settings
+        </span>
+      </div>
     </footer>
   );
 };
 
 export default Footer;
+

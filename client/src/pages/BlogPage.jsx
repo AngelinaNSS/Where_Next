@@ -1,7 +1,22 @@
-// src/pages/BlogPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import blogs from "../data/blogs";
+import "./BlogPage.css";
+
+const MAX_COMMENT_LENGTH = 280;
+
+const SAMPLE_GIFS = [
+  { url: "https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif", tags: ["happy", "yay"] },
+  { url: "https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif", tags: ["wow", "amazing"] },
+  { url: "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif", tags: ["cute", "cat"] },
+  { url: "https://media.giphy.com/media/26gssIytJvy1b1THO/giphy.gif", tags: ["travel", "plane"] },
+  { url: "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif", tags: ["sun", "happy"] },
+  { url: "https://media.giphy.com/media/l0ExncehJzexFpRHq/giphy.gif", tags: ["party", "cheers"] },
+  { url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif", tags: ["thumbs", "like"] },
+  { url: "https://media.giphy.com/media/3oEjHU1l8sLwZ6Qh5K/giphy.gif", tags: ["excited"] },
+];
+
+const EMOJI_PALETTE = ["❤️", "😍", "🔥", "😂", "👏", "🤩", "🌍", "✈️", "🎒", "📸"];
 
 const BlogPage = () => {
   const navigate = useNavigate();
@@ -17,182 +32,305 @@ const BlogPage = () => {
 
   const traveler = blogs ? blogs[blogId] : undefined;
 
-  const colors = {
-    bg: "#f9f7f3",
-    text: "#2c2c2c",
-    white: "#ffffff",
-    green: "#007f5f",
-    yellow: "#FFB400",
-    brown: "#d4a373",
-    cardShadow: "0 4px 12px rgba(0,0,0,0.1)",
+  // Comments state (local only) - a few sample comments
+  const [comments, setComments] = useState([
+    { user: "Emily", text: "This trip looks amazing!", likes: 4, liked: false, gif: null },
+    { user: "Leo", text: "Adding this to my bucket list 😍", likes: 7, liked: false, gif: SAMPLE_GIFS[1].url },
+    { user: "Maya", text: "Those photos are stunning 🔥", likes: 2, liked: false, gif: null },
+    { user: "Owen", text: "Best itinerary ever!", likes: 1, liked: false, gif: SAMPLE_GIFS[3].url },
+    { user: "Zara", text: "I want to go now 😭", likes: 5, liked: false, gif: null },
+  ]);
+
+  const [newComment, setNewComment] = useState("");
+  const [selectedGif, setSelectedGif] = useState(null); // URL
+  const [showGifPicker, setShowGifPicker] = useState(false);
+  const [gifSearch, setGifSearch] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
+
+  const gifLibrary = useMemo(() => {
+    // In a real app you might fetch GIPHY/Tenor. For now we filter SAMPLE_GIFS
+    const qs = gifSearch.trim().toLowerCase();
+    if (!qs) return SAMPLE_GIFS;
+    return SAMPLE_GIFS.filter(g => g.tags.join(" ").includes(qs) || g.url.includes(qs));
+  }, [gifSearch]);
+
+  const visibleComments = showAllComments ? comments : comments.slice(0, 3);
+
+  // Add new comment
+  const addComment = () => {
+    const text = newComment.trim();
+    if (!text && !selectedGif) return; // require content
+    if (text.length > MAX_COMMENT_LENGTH) return;
+
+    const newC = {
+      user: "You",
+      text,
+      likes: 0,
+      liked: false,
+      gif: selectedGif,
+      createdAt: Date.now(),
+    };
+    setComments([newC, ...comments]);
+    setNewComment("");
+    setSelectedGif(null);
+    setShowGifPicker(false);
+    setShowEmojiPicker(false);
+    setGifSearch("");
+    setShowAllComments(true); // show newest immediately
+  };
+
+  // Toggle like
+  const toggleLike = (index) => {
+    const updated = [...comments];
+    updated[index].liked = !updated[index].liked;
+    updated[index].likes += updated[index].liked ? 1 : -1;
+    setComments(updated);
+  };
+
+  // Insert emoji to input at cursor (simple append)
+  const insertEmoji = (emoji) => {
+    setNewComment((s) => (s ? s + " " + emoji : emoji));
+  };
+
+  // Add GIF by URL (allow user to paste GIF url)
+  const addCustomGif = () => {
+    const url = prompt("Paste a GIF URL (direct link ending with .gif or hosted).");
+    if (!url) return;
+    setSelectedGif(url);
+    setShowGifPicker(false);
   };
 
   if (!traveler) {
     return (
-      <div
-        style={{
-          width: "100vw",
-          minHeight: "100vh",
-          backgroundColor: colors.bg,
-          color: colors.text,
-          fontFamily: "'Poppins', sans-serif",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem",
-        }}
-      >
-        <div style={{ textAlign: "center", maxWidth: 720 }}>
-          <h1 style={{ color: colors.green }}>Blog not found</h1>
-          <button
-            onClick={() => navigate(-1)}
-            style={{
-              marginTop: 12,
-              padding: "0.6rem 1rem",
-              borderRadius: 8,
-              border: "none",
-              backgroundColor: colors.yellow,
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Go back
-          </button>
+      <div className="blog-not-found">
+        <div className="blog-not-found-inner">
+          <h1>Blog not found</h1>
+          <button onClick={() => navigate(-1)}>Go back</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        minHeight: "100vh",
-        backgroundColor: colors.bg,
-        color: colors.text,
-        fontFamily: "'Poppins', sans-serif",
-      }}
-    >
-      {/* Top Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "1.2rem 2rem",
-          borderBottom: "1px solid #eee",
-          position: "sticky",
-          top: 0,
-          backgroundColor: colors.bg,
-          zIndex: 10,
-        }}
-      >
-        <h1 style={{ fontSize: "2rem", color: colors.green, margin: 0 }}>
-          Where Next
-        </h1>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            backgroundColor: colors.yellow,
-            border: "none",
-            borderRadius: "10px",
-            padding: "0.7rem 1.2rem",
-            cursor: "pointer",
-            fontWeight: "600",
-            color: colors.white,
-          }}
-        >
+    <div className="blog-page">
+      {/* HEADER */}
+      <header className="blog-header">
+        <h1 className="blog-logo">Where Next</h1>
+        <button className="back-btn" onClick={() => navigate(-1)}>
           Back
         </button>
-      </div>
+      </header>
 
-      <div style={{ padding: 24, display: "flex", gap: 24, flexDirection: isMobile ? "column" : "row" }}>
-        {/* Sidebar */}
-        <aside
-          style={{
-            width: isMobile ? "100%" : 320,
-            backgroundColor: colors.white,
-            borderRadius: 12,
-            padding: 16,
-            boxShadow: colors.cardShadow,
-            flexShrink: 0,
-          }}
-        >
+      {/* HERO */}
+      {traveler.heroImage && (
+        <div className="blog-hero">
+          <img src={traveler.heroImage} alt={traveler.title} />
+          <div className="blog-hero-overlay">
+            <h2>{traveler.name}</h2>
+          </div>
+        </div>
+      )}
+
+      {/* MAIN */}
+      <div className="blog-container">
+        {/* SIDEBAR */}
+        <aside className={`blog-sidebar ${isMobile ? "mobile" : ""}`}>
           <img
+            className="sidebar-img"
             src={traveler.image || "https://via.placeholder.com/300x300"}
             alt={traveler.name}
-            style={{ width: "100%", borderRadius: 10, objectFit: "cover", marginBottom: 12 }}
           />
-          <h2 style={{ margin: 0, color: colors.green }}>{traveler.name}</h2>
-          <p style={{ color: "#444" }}>{traveler.bio}</p>
 
+          <h3 className="sidebar-name">{traveler.name}</h3>
+          <p className="sidebar-bio">{traveler.bio}</p>
+
+          {/* Travel Tips */}
           {traveler.tips && (
-            <>
-              <h4 style={{ marginTop: 12, color: colors.brown }}>Travel tips</h4>
-              <ul style={{ paddingLeft: 18, color: "#555" }}>
+            <div className="sidebar-section">
+              <h4>Travel Tips</h4>
+              <ul>
                 {traveler.tips.map((t, idx) => (
                   <li key={idx}>{t}</li>
                 ))}
               </ul>
-            </>
-          )}
-        </aside>
-
-        {/* Main Content */}
-        <main style={{ flex: 1 }}>
-          {/* Hero Image */}
-          {traveler.heroImage && (
-            <div style={{ width: "100%", maxHeight: 500, overflow: "hidden", marginBottom: 24 }}>
-              <img
-                src={traveler.heroImage}
-                alt={traveler.name}
-                style={{ width: "100%", objectFit: "cover" }}
-              />
             </div>
           )}
 
-          {/* Story */}
+          {/* COMMENTS SECTION */}
+          <div className="comments-section">
+            <h4>Comments</h4>
+
+            {/* Comment input area */}
+            <div className="comment-input-row enhanced">
+              <div className="input-left">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  maxLength={MAX_COMMENT_LENGTH}
+                  onChange={(e) => setNewComment(e.target.value)}
+                />
+                <div className="controls-row">
+                  <button
+                    className="tiny-btn"
+                    onClick={() => setShowEmojiPicker((s) => !s)}
+                    title="Emoji"
+                  >
+                    😊
+                  </button>
+
+                  <button
+                    className="tiny-btn"
+                    onClick={() => setShowGifPicker((s) => !s)}
+                    title="GIF"
+                  >
+                    GIF
+                  </button>
+
+                  <button className="tiny-btn" onClick={addCustomGif} title="Paste GIF URL">
+                    ➕GIF
+                  </button>
+
+                  <div className="char-counter">
+                    {newComment.length}/{MAX_COMMENT_LENGTH}
+                  </div>
+                </div>
+
+                {/* Emoji picker */}
+                {showEmojiPicker && (
+                  <div className="emoji-picker">
+                    {EMOJI_PALETTE.map((em, i) => (
+                      <button
+                        key={i}
+                        className="emoji-btn"
+                        onClick={() => insertEmoji(em)}
+                        aria-label={`emoji-${i}`}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* GIF picker */}
+                {showGifPicker && (
+                  <div className="gif-picker">
+                    <div className="gif-search-row">
+                      <input
+                        type="search"
+                        placeholder="Search GIFs (try: travel, cat, happy)"
+                        value={gifSearch}
+                        onChange={(e) => setGifSearch(e.target.value)}
+                      />
+                      <button className="tiny-btn" onClick={() => setGifSearch("")}>
+                        Clear
+                      </button>
+                    </div>
+                    <div className="gif-grid">
+                      {gifLibrary.map((g, i) => (
+                        <button
+                          key={i}
+                          className={`gif-thumb ${selectedGif === g.url ? "selected" : ""}`}
+                          onClick={() => setSelectedGif(g.url)}
+                        >
+                          <img src={g.url} alt={`gif-${i}`} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Selected GIF preview */}
+                {selectedGif && (
+                  <div className="selected-gif-preview">
+                    <img src={selectedGif} alt="selected gif" />
+                    <button className="remove-gif" onClick={() => setSelectedGif(null)}>
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="input-right">
+                <button
+                  className="send-comment-btn"
+                  onClick={addComment}
+                  disabled={newComment.trim().length === 0 && !selectedGif}
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+
+            {/* COMMENT LIST */}
+            <div className="comment-list">
+              {visibleComments.map((comment, idx) => (
+                <div className="comment-item" key={idx}>
+                  <div className="comment-avatar">
+                    {comment.user ? comment.user[0].toUpperCase() : "U"}
+                  </div>
+
+                  <div className="comment-body">
+                    <div className="comment-head">
+                      <strong className="comment-name">{comment.user}</strong>
+                      <div className="comment-actions">
+                        <button
+                          className={`heart-btn ${comment.liked ? "liked" : ""}`}
+                          onClick={() => toggleLike(idx)}
+                          aria-label="like"
+                        >
+                          ❤️
+                        </button>
+                        <span className="like-count">{comment.likes}</span>
+                      </div>
+                    </div>
+
+                    <p className="comment-text">{comment.text}</p>
+
+                    {comment.gif && (
+                      <div className="comment-gif">
+                        <img src={comment.gif} alt="comment gif" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Show more */}
+            {comments.length > 3 && (
+              <div className="show-more-row">
+                <button className="ghost-btn" onClick={() => setShowAllComments((s) => !s)}>
+                  {showAllComments ? "Show fewer" : `Show more (${comments.length - 3})`}
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* MAIN ARTICLE */}
+        <main className="blog-main">
           {traveler.story && (
-            <div
-              style={{
-                padding: 24,
-                backgroundColor: "#fff",
-                borderRadius: 12,
-                boxShadow: colors.cardShadow,
-                marginBottom: 24,
-                lineHeight: 1.6,
-              }}
-            >
+            <section className="blog-card">
               {traveler.story.split("\n\n").map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
-            </div>
+            </section>
           )}
 
-          {/* Sections */}
-          {traveler.sections && traveler.sections.map((section, idx) => (
-            <div
-              key={idx}
-              style={{
-                padding: 24,
-                backgroundColor: "#fff",
-                marginBottom: 24,
-                borderRadius: 12,
-                boxShadow: colors.cardShadow,
-              }}
-            >
-              <h3>{section.title}</h3>
-              {section.image && (
-                <img
-                  src={section.image}
-                  alt={section.title}
-                  style={{ width: "100%", borderRadius: 10, margin: "12px 0" }}
-                />
-              )}
-              <p>{section.text}</p>
-            </div>
-          ))}
+          {traveler.sections &&
+            traveler.sections.map((section, idx) => (
+              <section key={idx} className="blog-card">
+                <h3 className="section-title">{section.title}</h3>
+
+                {section.image && (
+                  <img src={section.image} alt={section.title} className="section-img" />
+                )}
+
+                <p>{section.text}</p>
+              </section>
+            ))}
         </main>
       </div>
     </div>
@@ -200,6 +338,5 @@ const BlogPage = () => {
 };
 
 export default BlogPage;
-
 
 

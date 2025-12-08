@@ -36,7 +36,7 @@ const DestinationPage = () => {
     if (countryName) fetchCountry();
   }, [countryName]);
 
-  // Mock data for now
+  
   const mockHotels = [
     { name: "Backpackers Hostel", price: "€18/night" },
     { name: "City Budget Inn", price: "€25/night" },

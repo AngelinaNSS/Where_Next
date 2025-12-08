@@ -1,0 +1,156 @@
+.myblog-wrapper {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+}
+
+.blog-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+}
+
+.blog-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.blog-text {
+  white-space: pre-line;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.blog-edit-box {
+  width: 100%;
+  height: 150px;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.edit-btn {
+  background: black;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+/* Likes */
+.like-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.heart-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.9rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.heart-btn.liked {
+  color: red;
+  transform: scale(1.2);
+}
+
+/* Comment Input Styles */
+.comment-input-box {
+  margin-top: 20px;
+}
+
+.comment-input {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  resize: none;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.char-count {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 4px;
+  color: gray;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.icon-btn {
+  background: #f1f1f1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.post-btn {
+  margin-left: auto;
+  background: black;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+/* Emoji & GIF panel */
+.emoji-panel,
+.gif-panel {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.emoji-btn {
+  font-size: 1.5rem;
+  background: white;
+  border: none;
+  cursor: pointer;
+}
+
+.gif-thumb {
+  width: 80px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+.selected-gif-preview img {
+  max-width: 150px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.comment-item {
+  margin-bottom: 15px;
+}
+
+.comment-gif {
+  width: 120px;
+  border-radius: 10px;
+  display: block;
+  margin-top: 6px;
+}
+
+/* Show More */
+.show-more-btn {
+  background: none;
+  border: none;
+  color: #007aff;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}

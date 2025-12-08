@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix Leaflet marker icons
+// Fix Leaflet markers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -31,32 +31,34 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // -----------------------------
+  // Fetch all data
+  // -----------------------------
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setErrorMsg("");
 
       try {
-        // --- Fetch country data ---
+        // Fetch Country Data
         let countryCoords = null;
         try {
           const countryRes = await fetch(
             `https://restcountries.com/v3.1/name/${query}`
           );
           const countryJson = await countryRes.json();
+
           if (Array.isArray(countryJson) && countryJson.length > 0) {
             setCountryData(countryJson[0]);
             countryCoords = countryJson[0].latlng;
-          } else {
-            setCountryData(null);
           }
         } catch {
           setCountryData(null);
         }
 
-        // --- Set lat/lng ---
         let lat = 20;
         let lng = 0;
+
         if (countryCoords) {
           lat = countryCoords[0];
           lng = countryCoords[1];
@@ -72,9 +74,10 @@ const SearchResults = () => {
             }
           } catch {}
         }
+
         setLatLng([lat, lng]);
 
-        // --- Wikipedia summary ---
+        // Wikipedia Summary
         try {
           const wikiRes = await fetch(
             `https://en.wikipedia.org/api/rest_v1/page/summary/${query}`
@@ -87,7 +90,7 @@ const SearchResults = () => {
           setWikiSummary("No summary available.");
         }
 
-        // --- Foursquare helper ---
+        // Foursquare Helper
         const fetchFoursquare = async (type) => {
           try {
             const res = await fetch(
@@ -106,12 +109,11 @@ const SearchResults = () => {
           }
         };
 
-        // --- Fetch places ---
         const landmarksData = await fetchFoursquare("tourist attraction");
         const hotelsData = await fetchFoursquare("hotel");
         const cafesData = await fetchFoursquare("cafe");
 
-        // --- Fetch photos for places ---
+        // Fetch Photos From Foursquare
         const fetchPhoto = async (fsq_id) => {
           try {
             const res = await fetch(
@@ -125,7 +127,7 @@ const SearchResults = () => {
             );
             const data = await res.json();
             if (Array.isArray(data) && data.length > 0) {
-              return `${data[0].prefix}300x200${data[0].suffix}`;
+              return `${data[0].prefix}400x300${data[0].suffix}`;
             }
             return null;
           } catch {
@@ -152,13 +154,25 @@ const SearchResults = () => {
     fetchData();
   }, [query]);
 
+  // -------------------------------
+  // Loading
+  // -------------------------------
   if (loading)
     return (
-      <div style={{ padding: "40px", fontFamily: "Poppins, sans-serif" }}>
-        <h1>Loading results for "{query}"...</h1>
+      <div
+        style={{
+          padding: "60px",
+          fontFamily: "Poppins, sans-serif",
+          fontSize: "1.2rem",
+        }}
+      >
+        <h1>Searching for “{query}”...</h1>
       </div>
     );
 
+  // -------------------------------
+  // Error
+  // -------------------------------
   if (errorMsg)
     return (
       <div style={{ padding: "40px", fontFamily: "Poppins, sans-serif" }}>
@@ -168,6 +182,11 @@ const SearchResults = () => {
             marginBottom: "20px",
             padding: "10px 15px",
             cursor: "pointer",
+            backgroundColor: "#b08b63",
+            border: "none",
+            borderRadius: "6px",
+            color: "#fff",
+            fontWeight: "600",
           }}
         >
           ⬅ Back
@@ -176,233 +195,224 @@ const SearchResults = () => {
       </div>
     );
 
+  // -------------------------------
+  // Shared Styles
+  // -------------------------------
   const sectionStyle = {
     marginBottom: "40px",
     padding: "25px",
-    borderRadius: "12px",
-    backgroundColor: "#fefefe",
-    boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+    borderRadius: "14px",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
   };
 
   const cardStyle = {
     padding: "15px",
     backgroundColor: "#ffffff",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    borderRadius: "14px",
+    boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
     textAlign: "center",
     cursor: "pointer",
-    transition: "transform 0.2s",
+    transition: "0.25s ease",
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "Poppins, sans-serif" }}>
-      {/* Banner */}
-      
-     <div
-  onClick={() => navigate(`/destination/${query}`)}
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "30px",
-    padding: "20px",
-    borderRadius: "12px",
-    background:
-      "linear-gradient(120deg, #a7c7b7 0%, #007f5f 100%)",
-    color: "#fff",
-    cursor: "pointer",
-    transition: "transform 0.2s",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
->
-  <h1 style={{ fontSize: "2.5rem" }}>{query}</h1>
-  {countryData?.flags?.png && (
-    <img
-      src={countryData.flags.png}
-      alt="flag"
-      style={{ width: "80px", borderRadius: "8px" }}
-    />
-  )}
-</div>
+    <div
+      style={{
+        padding: "40px",
+        fontFamily: "Poppins, sans-serif",
+        backgroundColor: "#f8f4ec",
+        minHeight: "100vh",
+      }}
+    >
+      {/* 🌿 Search Banner */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "linear-gradient(135deg, #a7c7b7, #2b6048)",
+          padding: "30px",
+          borderRadius: "18px",
+          color: "#fff",
+          marginBottom: "35px",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+          cursor: "pointer",
+        }}
+        onClick={() => navigate(`/destination/${query}`)}
+      >
+        <h1 style={{ fontSize: "2.4rem", margin: 0 }}>{query}</h1>
 
+        {countryData?.flags?.png && (
+          <img
+            src={countryData.flags.png}
+            alt="flag"
+            style={{
+              width: "90px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+            }}
+          />
+        )}
+      </div>
 
+      {/* BACK BUTTON */}
       <button
         onClick={() => navigate(-1)}
         style={{
-          marginBottom: "20px",
-          padding: "10px 15px",
+          marginBottom: "30px",
+          padding: "10px 18px",
           cursor: "pointer",
-          borderRadius: "6px",
+          backgroundColor: "#b08b63",
           border: "none",
-          backgroundColor: "#d4a373",
-          color: "#2c2c2c",
+          borderRadius: "8px",
+          color: "#fff",
           fontWeight: "600",
         }}
       >
         ⬅ Back
       </button>
 
-      {/* Wikipedia Summary */}
+      {/* FACTS SECTION */}
+      {countryData && (
+        <div style={sectionStyle}>
+          <h2 style={{ marginBottom: "20px", color: "#2b6048" }}>
+            Quick Facts
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: "18px",
+            }}
+          >
+            <div><strong>Capital:</strong> {countryData.capital?.[0] || "—"}</div>
+            <div><strong>Population:</strong> {countryData.population?.toLocaleString()}</div>
+            <div><strong>Region:</strong> {countryData.region}</div>
+            <div><strong>Currency:</strong> {Object.values(countryData.currencies || {})[0]?.name}</div>
+            <div><strong>Languages:</strong> {Object.values(countryData.languages || {}).join(", ")}</div>
+          </div>
+        </div>
+      )}
+
+      {/* SUMMARY */}
       <div style={sectionStyle}>
-        <h2>About {query}</h2>
-        <p>{wikiSummary}</p>
+        <h2 style={{ color: "#2b6048" }}>About {query}</h2>
+        <p style={{ lineHeight: "1.6" }}>{wikiSummary}</p>
       </div>
 
-      {/* Map */}
+      {/* MAP */}
       <div style={sectionStyle}>
-        <h2>Explore on Map</h2>
-        <MapContainer
-          center={latLng}
-          zoom={12}
-          style={{ height: "500px", width: "100%" }}
+        <h2 style={{ marginBottom: "20px", color: "#2b6048" }}>
+          Explore on Map
+        </h2>
+        <div
+          style={{
+            height: "500px",
+            borderRadius: "14px",
+            overflow: "hidden",
+            boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+          }}
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
-          {[...landmarks, ...hotels, ...cafes].map((place) => (
-            <Marker
-              key={place.fsq_id}
-              position={[
-                place.geocodes?.main?.latitude || latLng[0],
-                place.geocodes?.main?.longitude || latLng[1],
-              ]}
-            >
-              <Popup>
-                {place.photo && (
-                  <img
-                    src={place.photo}
-                    alt={place.name}
-                    style={{
-                      width: "100%",
-                      borderRadius: "6px",
-                      marginBottom: "5px",
-                    }}
-                  />
-                )}
-                <strong>{place.name}</strong>
-                <br />
-                {place.location?.formatted_address || "Address not available"}
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+          <MapContainer center={latLng} zoom={12} style={{ height: "100%" }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {[...landmarks, ...hotels, ...cafes].map((place) => (
+              <Marker
+                key={place.fsq_id}
+                position={[
+                  place.geocodes?.main?.latitude || latLng[0],
+                  place.geocodes?.main?.longitude || latLng[1],
+                ]}
+              >
+                <Popup>
+                  {place.photo && (
+                    <img
+                      src={place.photo}
+                      alt={place.name}
+                      style={{
+                        width: "100%",
+                        borderRadius: "6px",
+                        marginBottom: "5px",
+                      }}
+                    />
+                  )}
+                  <strong>{place.name}</strong>
+                  <br />
+                  {place.location?.formatted_address ||
+                    "Address not available"}
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
       </div>
 
-      {/* Sections */}
-      {landmarks.length > 0 && (
-        <div style={sectionStyle}>
-          <h2>Famous Tourist Attractions</h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "20px",
-            }}
-          >
-            {landmarks.map((lm) => (
+      {/* ALL SECTIONS */}
+      {[
+        { title: "Famous Tourist Attractions", data: landmarks },
+        { title: "Hotels", data: hotels },
+        { title: "Cafes & Local Spots", data: cafes },
+      ].map(
+        (section) =>
+          section.data.length > 0 && (
+            <div key={section.title} style={sectionStyle}>
+              <h2 style={{ marginBottom: "20px", color: "#2b6048" }}>
+                {section.title}
+              </h2>
               <div
-                key={lm.fsq_id}
-                style={cardStyle}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: "22px",
+                }}
               >
-                {lm.photo && (
-                  <img
-                    src={lm.photo}
-                    alt={lm.name}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                )}
-                <h3>{lm.name}</h3>
-                <p>{lm.location?.formatted_address || "Address not available"}</p>
+                {section.data.map((item) => (
+                  <div
+                    key={item.fsq_id}
+                    style={cardStyle}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "translateY(-6px)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "translateY(0)")
+                    }
+                  >
+                    {item.photo && (
+                      <img
+                        src={item.photo}
+                        alt={item.name}
+                        style={{
+                          width: "100%",
+                          height: "150px",
+                          objectFit: "cover",
+                          borderRadius: "10px",
+                          marginBottom: "12px",
+                        }}
+                      />
+                    )}
+                    <h3 style={{ fontSize: "1.2rem", color: "#2b6048" }}>
+                      {item.name}
+                    </h3>
+                    <p style={{ fontSize: "0.9rem" }}>
+                      {item.location?.formatted_address ||
+                        "Address unavailable"}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {hotels.length > 0 && (
-        <div style={sectionStyle}>
-          <h2>Hotels</h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "20px",
-            }}
-          >
-            {hotels.map((ht) => (
-              <div
-                key={ht.fsq_id}
-                style={cardStyle}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                {ht.photo && (
-                  <img
-                    src={ht.photo}
-                    alt={ht.name}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                )}
-                <h3>{ht.name}</h3>
-                <p>{ht.location?.formatted_address || "Address not available"}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {cafes.length > 0 && (
-        <div style={sectionStyle}>
-          <h2>Cafes & Local Spots</h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "20px",
-            }}
-          >
-            {cafes.map((cafe) => (
-              <div
-                key={cafe.fsq_id}
-                style={cardStyle}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              >
-                {cafe.photo && (
-                  <img
-                    src={cafe.photo}
-                    alt={cafe.name}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
-                    }}
-                  />
-                )}
-                <h3>{cafe.name}</h3>
-                <p>{cafe.location?.formatted_address || "Address not available"}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          )
       )}
     </div>
   );
 };
 
 export default SearchResults;
+
 
 
 
