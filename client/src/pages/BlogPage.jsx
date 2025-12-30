@@ -22,6 +22,7 @@ const BlogPage = () => {
   const navigate = useNavigate();
   const { blogId } = useParams();
   const [isMobile, setIsMobile] = useState(false);
+  
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 900);
@@ -32,7 +33,7 @@ const BlogPage = () => {
 
   const traveler = blogs ? blogs[blogId] : undefined;
 
-  // Comments state (local only) - a few sample comments
+  // comments
   const [comments, setComments] = useState([
     { user: "Emily", text: "This trip looks amazing!", likes: 4, liked: false, gif: null },
     { user: "Leo", text: "Adding this to my bucket list 😍", likes: 7, liked: false, gif: SAMPLE_GIFS[1].url },
@@ -49,7 +50,9 @@ const BlogPage = () => {
   const [showAllComments, setShowAllComments] = useState(false);
 
   const gifLibrary = useMemo(() => {
-    // In a real app you might fetch GIPHY/Tenor. For now we filter SAMPLE_GIFS
+   
+   
+    // SAMPLE GIFS
     const qs = gifSearch.trim().toLowerCase();
     if (!qs) return SAMPLE_GIFS;
     return SAMPLE_GIFS.filter(g => g.tags.join(" ").includes(qs) || g.url.includes(qs));
@@ -77,10 +80,10 @@ const BlogPage = () => {
     setShowGifPicker(false);
     setShowEmojiPicker(false);
     setGifSearch("");
-    setShowAllComments(true); // show newest immediately
+    setShowAllComments(true); 
   };
 
-  // Toggle like
+  // Toggle 
   const toggleLike = (index) => {
     const updated = [...comments];
     updated[index].liked = !updated[index].liked;
@@ -88,14 +91,14 @@ const BlogPage = () => {
     setComments(updated);
   };
 
-  // Insert emoji to input at cursor (simple append)
+  
   const insertEmoji = (emoji) => {
     setNewComment((s) => (s ? s + " " + emoji : emoji));
   };
 
-  // Add GIF by URL (allow user to paste GIF url)
+  // user can Add their GIF by URL 
   const addCustomGif = () => {
-    const url = prompt("Paste a GIF URL (direct link ending with .gif or hosted).");
+    const url = prompt("Paste your GIF URL (direct link ending with .gif or hosted).");
     if (!url) return;
     setSelectedGif(url);
     setShowGifPicker(false);
@@ -113,14 +116,31 @@ const BlogPage = () => {
   }
 
   return (
+    
     <div className="blog-page">
-      {/* HEADER */}
+        {/* HEADER */}
       <header className="blog-header">
         <h1 className="blog-logo">Where Next</h1>
         <button className="back-btn" onClick={() => navigate(-1)}>
           Back
         </button>
       </header>
+
+      <header className="blog-header">
+  <h1 className="blog-logo">Where Next</h1>
+
+  <div className="header-buttons">
+    <button className="back-btn" onClick={() => navigate(-1)}>Back</button>
+
+    <button
+      className="edit-btn"
+      onClick={() => navigate(`/edit-blog/${traveler.id}`)}
+    >
+     Edit Blog
+    </button>
+  </div>
+</header>
+
 
       {/* HERO */}
       {traveler.heroImage && (
@@ -134,6 +154,7 @@ const BlogPage = () => {
 
       {/* MAIN */}
       <div className="blog-container">
+        
         {/* SIDEBAR */}
         <aside className={`blog-sidebar ${isMobile ? "mobile" : ""}`}>
           <img
@@ -172,6 +193,7 @@ const BlogPage = () => {
                   onChange={(e) => setNewComment(e.target.value)}
                 />
                 <div className="controls-row">
+                  
                   <button
                     className="tiny-btn"
                     onClick={() => setShowEmojiPicker((s) => !s)}

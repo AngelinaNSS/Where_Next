@@ -2,28 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SplashPage = () => {
-  const [showText, setShowText] = useState(false);
-  const [showButton, setShowButton] = useState(false);
   const navigate = useNavigate();
 
-  // Stars
-  const [stars] = useState(
-    Array.from({ length: 80 }).map(() => ({
-      size: Math.random() * 2 + 1,
-      opacity: Math.random() * 0.8 + 0.2,
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      duration: 5 + Math.random() * 10,
-    }))
-  );
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    const textTimer = setTimeout(() => setShowText(true), 1000);
-    const buttonTimer = setTimeout(() => setShowButton(true), 2000);
-    return () => {
-      clearTimeout(textTimer);
-      clearTimeout(buttonTimer);
-    };
+    const timer = setTimeout(() => setShowContent(true), 300);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -31,106 +16,84 @@ const SplashPage = () => {
       style={{
         width: "100vw",
         height: "100vh",
-        backgroundColor: "#000",
         overflow: "hidden",
         position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        background: "linear-gradient(135deg, #fee3f0, #c1eff2, #ffffff)",
       }}
     >
-      {/* Stars */}
-      {stars.map((star, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            width: star.size + "px",
-            height: star.size + "px",
-            backgroundColor: "#fff",
-            borderRadius: "50%",
-            top: star.top + "vh",
-            left: star.left + "vw",
-            opacity: star.opacity,
-            animation: `twinkle ${star.duration}s infinite alternate`,
-          }}
-        />
-      ))}
-
-      {/* Earth */}
-      <img
-        src="/assets/images/earth2.png"
-        alt="Earth"
+      {/* Main Content */}
+      <div
         style={{
-          width: "80vmin",
-          height: "80vmin",
-          objectFit: "cover",
-          borderRadius: "50%",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          opacity: showContent ? 1 : 0,
+          transform: showContent ? "translateY(0)" : "translateY(20px)",
+          transition: "all 0.8s ease",
+          textAlign: "center",
+          padding: "1rem",
         }}
-      />
-
-      {/* Where Next Text */}
-      {showText && (
+      >
+        {/* Title */}
         <h1
           style={{
-            color: "#cbe9ee",
-            fontSize: "9vmin",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            fontSize: "3.8rem",
+            fontWeight: 700,
+            background: "linear-gradient(90deg, #3ac7d8, #6ee7e0)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
+            marginBottom: "0.4rem",
           }}
         >
-          Where Next!
+          Where Next?
         </h1>
-      )}
 
-      {/* Plane */}
-      <img
-        src="/assets/images/plane2.png"
-        alt="Plane"
-        style={{
-          position: "absolute",
-          width: "130px",
-          height: "130px",
-          top: "70%",
-          left: "-150px",
-          animation: "flyPlane 18s ease-in-out forwards",
-        }}
-      />
-
-      {/* Let's Go Button */}
-      {showButton && (
-        <button
+        {/* Subtitle */}
+        <p
           style={{
-            position: "absolute",
-            bottom: "5%",
-            right: "5%",
-            padding: "0.8rem 1.5rem",
-            fontSize: "1.4rem",
-            borderRadius: "10px",
-            border: "none",
-            backgroundColor: "#00cfff",
-            cursor: "pointer",
+            fontSize: "1.3rem",
+            color: "#6c7a7a",
+            marginBottom: "2.5rem",
           }}
-          onClick={() => navigate("/auth")}
         >
-          Let's Go
+          Discover your next adventure
+        </p>
+
+
+        {/* Let's Go Button */}
+        <button
+          onClick={() => navigate("/auth")}
+          style={{
+            padding: "0.9rem 2.2rem",
+            fontSize: "1.3rem",
+            borderRadius: "30px",
+            border: "none",
+            background: "linear-gradient(135deg, #8be3ff, #f9bddb)",
+            color: "#fff",
+            fontWeight: 600,
+            cursor: "pointer",
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
+            transition: "transform 0.2s ease",
+          }}
+          onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+        >
+          Let’s Go
         </button>
-      )}
+      </div>
+
+      {/* Decorative Floating Clouds */}
+      <div style={cloudStyle(10, -20, 18)} />
+      <div style={cloudStyle(70, -10, 22)} />
+      <div style={cloudStyle(40, 80, 15)} />
 
       <style>
         {`
-          @keyframes twinkle {
-            from { opacity: 0.2; }
-            to { opacity: 1; }
-          }
-          @keyframes flyPlane {
-            0% { left: -150px; top: 70%; transform: rotate(10deg); }
-            40% { left: 40%; top: 40%; transform: rotate(20deg); }
-            70% { left: 70%; top: 30%; transform: rotate(15deg); }
-            100% { left: 88%; top: 75%; transform: rotate(0deg); }
+          @keyframes floatCloud {
+            0% { transform: translateX(0px); }
+            50% { transform: translateX(25px); }
+            100% { transform: translateX(0px); }
           }
         `}
       </style>
@@ -138,7 +101,21 @@ const SplashPage = () => {
   );
 };
 
+/* cloud generator */
+const cloudStyle = (top, left, size) => ({
+  position: "absolute",
+  top: `${top}%`,
+  left: `${left}%`,
+  width: `${size}vmin`,
+  height: `${size}vmin`,
+  background: "rgba(255,255,255,0.8)",
+  borderRadius: "50px",
+  filter: "blur(12px)",
+  animation: "floatCloud 8s ease-in-out infinite",
+});
+
 export default SplashPage;
+
 
 
 

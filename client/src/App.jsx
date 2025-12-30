@@ -20,6 +20,7 @@ import Footer from "./components/Footer";
 import TravelGalleryPage from "./pages/TravelGalleryPage";
 import TravelToolsPage from "./pages/TravelToolsPage";
 import MyBlogPage from "./pages/MyBlogPage";
+import CreateBlogPage from "./pages/CreateBlogPage";
 
 
 
@@ -49,6 +50,8 @@ function App() {
         <Route path="/travel-gallery" element={<TravelGalleryPage />} />
         <Route path="/travel-tools" element={<TravelToolsPage />} />
         <Route path="/my-blog/:id" element={<MyBlogPage />} />
+        <Route path="/create-blog" element={<CreateBlogPage />} />
+
 
 
 

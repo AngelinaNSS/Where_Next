@@ -13,14 +13,14 @@ const QuizPage = () => {
   }, []);
 
   const colors = {
-    bg: "#f9f7f3",
+    bg: "#fbf5fcff",
     text: "#2c2c2c",
     white: "#ffffff",
-    green: "#007f5f",
-    yellow: "#FFB400",
-    yellowHover: "#E59400",
-    blue: "#3b82f6",
-    blueHover: "#2563eb",
+    green: "#00c7ceff",
+    yellow: "#a5d9f0ff",
+    yellowHover: "#d292ebff",
+    blue: "#3b83f69c",
+    blueHover: "#4878dfff",
     cardShadow: "0 4px 12px rgba(0,0,0,0.1)",
   };
 
@@ -33,7 +33,7 @@ const QuizPage = () => {
 
   const continents = ["Europe", "Asia", "Africa", "North America", "South America", "Oceania"];
 
-  // Continent-specific questions
+  // Continent questions
   const questionsByContinent = {
     Europe: [
       { q: "Do you enjoy historical towns or modern cities?", options: ["Historical", "Modern"] },
