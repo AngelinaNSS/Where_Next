@@ -19,37 +19,53 @@ const MyBlogPage = () => {
 
   return (
     <div style={{ width: "100%", paddingBottom: 60 }}>
+      
       {/* Top Navigation */}
-      <div
-        style={{
-          padding: "1rem 2rem",
-          borderBottom: "1px solid #eee",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          position: "sticky",
-          top: 0,
-          background: "#fff",
-          zIndex: 10,
-        }}
-      >
-        <h2 style={{ margin: 0 }}>My Blog</h2>
+<div
+  style={{
+    padding: "1rem 2rem",
+    borderBottom: "1px solid #eee",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "sticky",
+    top: 0,
+    background: "#fff",
+    zIndex: 10,
+  }}
+>
+  <button
+    onClick={() => navigate("/profile")}
+    style={{
+      padding: ".5rem 1rem",
+      background: "#e3e3e3",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontWeight: 600,
+    }}
+  >
+    ← Back to Profile
+  </button>
 
-        <button
-          onClick={() => navigate(`/edit-blog/${blog.id}`)}
-          style={{
-            padding: ".5rem 1rem",
-            background: "#FFB400",
-            border: "none",
-            borderRadius: "8px",
-            color: "#fff",
-            fontWeight: "600",
-            cursor: "pointer",
-          }}
-        >
-          Edit Blog
-        </button>
-      </div>
+  <h2 style={{ margin: 0 }}>My Blog</h2>
+
+  <button
+    onClick={() => navigate(`/edit-blog/${blog.id}`)}
+    style={{
+      padding: ".5rem 1rem",
+      background: "#75aff1",
+      border: "none",
+      borderRadius: "8px",
+      color: "#fff",
+      fontWeight: "600",
+      cursor: "pointer",
+    }}
+  >
+    Edit Blog
+  </button>
+</div>
+
 
       {/* HERO IMAGE */}
       <div style={{ width: "100%", maxHeight: 480, overflow: "hidden" }}>

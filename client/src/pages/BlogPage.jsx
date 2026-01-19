@@ -18,6 +18,8 @@ const SAMPLE_GIFS = [
 
 const EMOJI_PALETTE = ["❤️", "😍", "🔥", "😂", "👏", "🤩", "🌍", "✈️", "🎒", "📸"];
 
+
+
 const BlogPage = () => {
   const navigate = useNavigate();
   const { blogId } = useParams();
@@ -32,6 +34,11 @@ const BlogPage = () => {
   }, []);
 
   const traveler = blogs ? blogs[blogId] : undefined;
+  const [liked, setLiked] = useState(false);
+const [showHearts, setShowHearts] = useState(false);
+
+
+
 
   // comments
   const [comments, setComments] = useState([
@@ -52,7 +59,7 @@ const BlogPage = () => {
   const gifLibrary = useMemo(() => {
    
    
-    // SAMPLE GIFS
+    // gifs
     const qs = gifSearch.trim().toLowerCase();
     if (!qs) return SAMPLE_GIFS;
     return SAMPLE_GIFS.filter(g => g.tags.join(" ").includes(qs) || g.url.includes(qs));
@@ -60,10 +67,10 @@ const BlogPage = () => {
 
   const visibleComments = showAllComments ? comments : comments.slice(0, 3);
 
-  // Add new comment
+  // add new comment
   const addComment = () => {
     const text = newComment.trim();
-    if (!text && !selectedGif) return; // require content
+    if (!text && !selectedGif) return; 
     if (text.length > MAX_COMMENT_LENGTH) return;
 
     const newC = {
@@ -83,7 +90,7 @@ const BlogPage = () => {
     setShowAllComments(true); 
   };
 
-  // Toggle 
+
   const toggleLike = (index) => {
     const updated = [...comments];
     updated[index].liked = !updated[index].liked;
@@ -96,7 +103,7 @@ const BlogPage = () => {
     setNewComment((s) => (s ? s + " " + emoji : emoji));
   };
 
-  // user can Add their GIF by URL 
+  
   const addCustomGif = () => {
     const url = prompt("Paste your GIF URL (direct link ending with .gif or hosted).");
     if (!url) return;
@@ -118,28 +125,18 @@ const BlogPage = () => {
   return (
     
     <div className="blog-page">
+        
         {/* HEADER */}
-      <header className="blog-header">
-        <h1 className="blog-logo">Where Next</h1>
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          Back
-        </button>
-      </header>
+  <header className="blog-header">
+    <h1 className="blog-logo">Where Next</h1>
 
-      <header className="blog-header">
-  <h1 className="blog-logo">Where Next</h1>
+    <div className="header-buttons">
+      <button className="back-btn" onClick={() => navigate(-1)}>Back</button>
 
-  <div className="header-buttons">
-    <button className="back-btn" onClick={() => navigate(-1)}>Back</button>
+  
+    </div>
+  </header>
 
-    <button
-      className="edit-btn"
-      onClick={() => navigate(`/edit-blog/${traveler.id}`)}
-    >
-     Edit Blog
-    </button>
-  </div>
-</header>
 
 
       {/* HERO */}
@@ -152,19 +149,67 @@ const BlogPage = () => {
         </div>
       )}
 
+
       {/* MAIN */}
       <div className="blog-container">
+
         
         {/* SIDEBAR */}
         <aside className={`blog-sidebar ${isMobile ? "mobile" : ""}`}>
           <img
             className="sidebar-img"
-            src={traveler.image || "https://via.placeholder.com/300x300"}
+            src={"/drinks.jpg"}
             alt={traveler.name}
           />
 
           <h3 className="sidebar-name">{traveler.name}</h3>
           <p className="sidebar-bio">{traveler.bio}</p>
+
+
+          {/* LIKE BUTTON WITH HEARTS */}
+<div style={{ margin: "16px 0", position: "relative", textAlign: "center" }}>
+  <button
+    onClick={() => {
+      if (!liked) {
+        setLiked(true);
+        setShowHearts(true);
+        setTimeout(() => setShowHearts(false), 3000);
+      } else {
+        setLiked(false);
+      }
+    }}
+    style={{
+      padding: "10px 24px",
+      borderRadius: "12px",
+      border: "none",
+      background: liked ? "#ff6b81" : "#5170ff",
+      color: "#fff",
+      fontWeight: 600,
+      cursor: "pointer",
+      fontSize: "1rem",
+    }}
+  >
+    {liked ? "❤️ Liked" : "🤍 Like"}
+  </button>
+
+  {showHearts && (
+    <div className="hearts-animation">
+      {[...Array(20)].map((_, i) => (
+        <span
+          key={i}
+          className="heart"
+          style={{
+            left: `${Math.random() * 100 - 50}%`,
+            fontSize: `${12 + Math.random() * 16}px`,
+            animationDelay: `${Math.random() * 1.5}s`,
+          }}
+        >
+          ❤️
+        </span>
+      ))}
+    </div>
+  )}
+</div>
 
           {/* Travel Tips */}
           {traveler.tips && (
@@ -182,7 +227,7 @@ const BlogPage = () => {
           <div className="comments-section">
             <h4>Comments</h4>
 
-            {/* Comment input area */}
+            {/* input comments */}
             <div className="comment-input-row enhanced">
               <div className="input-left">
                 <input

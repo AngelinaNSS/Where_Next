@@ -21,6 +21,11 @@ import TravelGalleryPage from "./pages/TravelGalleryPage";
 import TravelToolsPage from "./pages/TravelToolsPage";
 import MyBlogPage from "./pages/MyBlogPage";
 import CreateBlogPage from "./pages/CreateBlogPage";
+import TripCountdownPage from "./pages/TripCountdownPage";
+import OrganizeTripPage from "./pages/OrganizeTripPage";
+import EditBlogPage from "./pages/EditBlogPage";
+import AboutPage from "./pages/AboutPage";
+
 
 
 
@@ -51,9 +56,12 @@ function App() {
         <Route path="/travel-tools" element={<TravelToolsPage />} />
         <Route path="/my-blog/:id" element={<MyBlogPage />} />
         <Route path="/create-blog" element={<CreateBlogPage />} />
+        <Route path="/trip-countdown" element={<TripCountdownPage />} />
+        <Route path="/organize" element={<OrganizeTripPage />} />
+        <Route path="/edit-blog/:blogId" element={<EditBlogPage />} />
+        <Route path="/about" element={<AboutPage />} />
 
-
-
+       
 
       </Routes>
       <Footer />

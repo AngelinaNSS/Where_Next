@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 // Destination knowledge base
 const destinationData = {
@@ -44,9 +46,20 @@ const AIDestinationAdvisor = () => {
   const [newItem, setNewItem] = useState("");
   const [checklist, setChecklist] = useState([]);
 
-  // Show More / Show Less toggles
   const [showAllAreas, setShowAllAreas] = useState(false);
   const [showAllTips, setShowAllTips] = useState(false);
+
+  const { state } = useLocation();
+
+useEffect(() => {
+  if (state?.country) {
+    setQuery(state.country);
+  }
+  if (state?.tripDate) {
+    setTripDate(state.tripDate);
+  }
+}, [state]);
+
 
   const cuteAvatars = ["/avatar1.png","/avatar2.png","/avatar3.png","/avatar4.png","/avatar5.png"];
   const fakePackingTips = [
@@ -108,14 +121,14 @@ const AIDestinationAdvisor = () => {
   };
   const handleKeyDown = (e) => { if (e.key === "Enter") handleSearch(); };
 
-  // Checklist functions
+  // Checklist 
   const addChecklistItem = () => { if (!newItem.trim()) return; const updated = [...checklist, { text: newItem, done: false }]; setChecklist(updated); setNewItem(""); localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated)); };
   const toggleChecklistItem = (i) => { const updated = [...checklist]; updated[i].done = !updated[i].done; setChecklist(updated); localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated)); };
   const removeChecklistItem = (i) => { const updated = checklist.filter((_, idx) => idx !== i); setChecklist(updated); localStorage.setItem(`packing_${query.trim()}`, JSON.stringify(updated)); };
 
   const destinationInfo = result ? destinationData[result.name.toLowerCase()] : null;
 
-  // Sample community data
+  // community data
   const communityAreas = [
     { id:1, user:"Emma Johnson", avatar:"/avatar1.png", comment:"Toronto's Distillery District is amazing!", likes:12, replies:[{user:"Lucas M.", text:"Omg I was there too!"}] },
     { id:2, user:"Michael Lee", avatar:"/avatar2.png", comment:"Montreal's Plateau neighborhood is my favorite.", likes:8, replies:[] },
@@ -132,6 +145,7 @@ const AIDestinationAdvisor = () => {
         .sectionTitle {margin-top:0; margin-bottom:0.7rem; color:${colors.green};}
       `}</style>
       <div className="root">
+        
         {/* Header */}
         <div style={{display:"flex", justifyContent:"space-between", marginBottom:"2rem"}}>
           <div>
@@ -274,6 +288,7 @@ const AIDestinationAdvisor = () => {
 };
 
 export default AIDestinationAdvisor;
+
 
 
 

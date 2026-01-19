@@ -1,4 +1,4 @@
-/* GLOBAL COLORS */
+
 :root {
   --bg: #f7f7f7;
   --card-bg: #ffffff;
@@ -12,7 +12,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* PAGE */
+
 .blog-page {
   background: var(--bg);
   min-height: 100vh;
@@ -21,7 +21,7 @@
   margin-left: calc(-50vw + 50%);
 }
 
-/* HEADER */
+
 .blog-header {
   position: sticky;
   top: 0;
@@ -109,7 +109,7 @@
   font-weight: 700;
 }
 
-/* LAYOUT */
+/* layout */
 .blog-container {
   max-width: var(--max-width);
   margin: 2rem auto;
@@ -118,7 +118,7 @@
   gap: 32px;
 }
 
-/* SIDEBAR */
+
 .blog-sidebar {
   width: 300px;
   background: linear-gradient(135deg, #ffffff, #fafafa);
@@ -160,7 +160,7 @@
   color: var(--text-light);
 }
 
-/* MAIN CONTENT */
+/* main content */
 .blog-main {
   flex: 1;
   display: flex;
@@ -192,7 +192,7 @@
   margin: 1rem 0;
 }
 
-/* COMMENTS SECTION */
+/* comments */
 .comments-section {
   margin-top: 2rem;
 }
@@ -202,7 +202,7 @@
   margin-bottom: 1rem;
 }
 
-/* Enhanced input row */
+
 .comment-input-row.enhanced {
   display: flex;
   gap: 0.6rem;
@@ -246,7 +246,7 @@
   color: var(--text-light);
 }
 
-/* Emoji picker */
+
 .emoji-picker {
   margin-top: 0.6rem;
   display: flex;
@@ -266,7 +266,7 @@
   cursor: pointer;
 }
 
-/* GIF picker */
+/* GIFs */
 .gif-picker {
   margin-top: 0.6rem;
   background: #fff;
@@ -310,7 +310,7 @@
   border-radius: 6px;
 }
 
-/* Selected GIF preview */
+
 .selected-gif-preview {
   margin-top: 0.6rem;
   display: flex;
@@ -350,7 +350,7 @@
   font-weight: 600;
 }
 
-/* LIST */
+
 .comment-list {
   margin-top: 1rem;
 }
@@ -425,7 +425,7 @@
   color: var(--text-light);
 }
 
-/* comment text and gif */
+
 .comment-text {
   margin: 0.4rem 0 0;
   color: var(--text-light);
@@ -455,7 +455,6 @@
   cursor: pointer;
 }
 
-/* NOT FOUND */
 .blog-not-found {
   background: var(--bg);
   min-height: 100vh;
@@ -476,4 +475,24 @@
   background: var(--accent);
   color: white;
   font-weight: bold;
+}
+
+.hearts-animation {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.heart {
+  position: absolute;
+  animation: floatUp 3s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-200px) scale(0.8); opacity: 0; }
 }

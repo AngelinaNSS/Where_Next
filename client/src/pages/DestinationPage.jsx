@@ -70,14 +70,15 @@ const DestinationPage = () => {
   if (!countryData || countryData.error) return <p style={{ textAlign: "center", marginTop: 50 }}>Country not found.</p>;
 
   return (
+    
     <div
-      style={{
-        width: "100vw",
-        minHeight: "100vh",
-        backgroundColor: colors.bg,
-        color: colors.text,
-        fontFamily: "'Poppins', sans-serif",
-      }}
+    style={{
+    minHeight: "100vh",
+    backgroundColor: colors.bg,
+    fontFamily: "'Poppins', sans-serif",
+    display: "flex",
+    justifyContent: "center",
+  }}
     >
       {/* Top Bar */}
       <div
@@ -100,13 +101,12 @@ const DestinationPage = () => {
 
       {/* Main Layout */}
       <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          padding: "2rem",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems: "flex-start",
-        }}
+      style={{
+    width: "100%",
+    maxWidth: "1200px",
+    padding: "2rem 1.5rem",
+  }}
+  
       >
         {/* Sidebar: Country Info */}
         <aside

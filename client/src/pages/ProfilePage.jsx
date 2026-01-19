@@ -5,7 +5,8 @@ import { MdInsights, MdCardGiftcard } from "react-icons/md";
 import { FaRegHeart, FaImages } from "react-icons/fa";
 import { IoMdMap } from "react-icons/io";
 import { useTranslation } from "react-i18next";
-import HamburgerMenu from "../components/HamburgerMenu";
+
+
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -34,9 +35,11 @@ const ProfilePage = () => {
 
   const sidebarButton = (bg) => ({
     width: "100%",
+    maxWidth: "100%",
+    margin: "0",
     padding: "12px 18px",
     backgroundColor: bg,
-    color: "#fff",
+    color: "#fde6e6",
     border: "none",
     borderRadius: "12px",
     fontSize: "1rem",
@@ -54,13 +57,14 @@ const ProfilePage = () => {
     <>
       <style>{`
         :root{
-          --container-max: 1200px;
+          --container-max: 1400px;
           --card-radius: 16px;
           --gutter: 1.25rem;
         }
 
         .pp-root{
           min-height: 100vh;
+          width: 100vw;
           background: ${colors.bgGradient};
           font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
           color: ${colors.text};
@@ -68,12 +72,12 @@ const ProfilePage = () => {
         }
 
         .pp-container{
-          max-width: var(--container-max);
-          margin: 0 auto;
           width: 100%;
+          max-width: 1400px;
+          margin: 0 auto;
         }
 
-        /* topbar */
+        
         .pp-topbar{
           display:flex;
           justify-content:space-between;
@@ -117,7 +121,7 @@ const ProfilePage = () => {
         }
         .pp-back-pill:hover{ transform: translateY(-3px); }
 
-        /* layout: sidebar + main */
+        
         .pp-layout{
           display: grid;
           grid-template-columns: 320px 1fr;
@@ -125,7 +129,7 @@ const ProfilePage = () => {
           align-items: start;
         }
 
-        /* sidebar card */
+        
         .pp-sidebar{
           background: ${colors.card};
           border-radius: var(--card-radius);
@@ -218,7 +222,7 @@ const ProfilePage = () => {
         }
         .next-button:hover{ transform: translateX(6px); }
 
-        /* responsive */
+       
         @media (max-width: 980px){
           .pp-layout{ grid-template-columns: 1fr; }
           .pp-topbar{ flex-direction: column; align-items:flex-start; gap:.6rem; }
@@ -227,16 +231,13 @@ const ProfilePage = () => {
 
       <div className="pp-root">
         <div className="pp-container">
-          {/* Hamburger menu */}
-          <div style={{ position: "absolute", top: 0.5, left: 3 }}>
-            <HamburgerMenu />
-          </div>
+      
 
-          {/* TOP BAR / HERO */}
+          {/* Top bar */}
           <div className="pp-topbar">
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <h1 className="pp-title">{t("Where Next")}</h1>
-              <div style={{ color: "#6b6b6b", fontSize: 13 }}>{t("Discover your next adventure")}</div>
+              <div style={{ color: "#6b6b6b", fontSize: 13 }}>{t("How far can you go?")}</div>
             </div>
 
             <div className="pp-top-actions">
@@ -264,9 +265,9 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* LAYOUT: Sidebar + Main */}
+          {/* sidebar */}
           <div className="pp-layout">
-            {/* SIDEBAR */}
+            {/* Sidebar + main content */}
             <aside className="pp-sidebar">
               <div className="profile-head">
                 <img
@@ -289,14 +290,178 @@ const ProfilePage = () => {
 
               <div style={{ display: "grid", gap: 6 }}>
                 <div><strong>{t("hobbies")}:</strong> Hiking, Photography, Local Cuisine</div>
-                <div><strong>Favorite place:</strong> Kyoto, Japan</div>
-                <div><strong>Next destination:</strong> Iceland</div>
+                <div><strong>Favorite place:</strong> New Zealand </div>
+                <div><strong>Next destination:</strong> Madrid, Spain </div>
               </div>
 
               <div className="pp-stats">
                 <div>{t("followers")}: 1280</div>
                 <div>{t("following")}: 245</div>
               </div>
+
+              {/* Recommended ppl to Follow */}
+<div style={{ marginTop: "30px" }}>
+  <h3 style={{ fontSize: "1rem", marginBottom: "15px", color: "#333" }}>
+    Recommended People to Follow
+  </h3>
+
+
+  {(() => {
+    const [selectedProfile, setSelectedProfile] = useState(null);
+    const [followedProfiles, setFollowedProfiles] = useState([]);
+
+    const profiles = [
+      {
+        username: "TravelLover99",
+        avatar: "/srilanka.jpg",
+        bio: "I love exploring hidden gems around the world 🌎✈️",
+        location: "Paris, France",
+        posts: ["Visited the Eiffel Tower today!", "Tried authentic croissants 🥐"],
+      },
+      {
+        username: "GlobeTrotter23",
+        avatar: "/drinks.jpg",
+        bio: "Adventure seeker and food explorer. On the hunt for the best grub! 🍣🏞️",
+        location: "Tokyo, Japan",
+        posts: ["Climbed Mount Fuji 🗻", "Sushi market adventures!"],
+      },
+      {
+        username: "FoodieExplorer",
+        avatar: "/bali2.jpg",
+        bio: "Travel is freeing! My goal is 100 countries. 🍲",
+        location: "Bangkok, Thailand",
+        posts: ["Street food tour today 🌶️", "Best mango sticky rice ever!"],
+      },
+    ];
+
+    const toggleFollow = (username) => {
+      if (followedProfiles.includes(username)) {
+        setFollowedProfiles(followedProfiles.filter((u) => u !== username));
+      } else {
+        setFollowedProfiles([...followedProfiles, username]);
+      }
+    };
+
+    return (
+      <>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {profiles.map((profile) => {
+            const followed = followedProfiles.includes(profile.username);
+            return (
+              <div
+                key={profile.username}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 15px",
+                  background: "#f7f7f7",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  cursor: "pointer",
+                }}
+                onClick={() => setSelectedProfile(profile)}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <img
+                    src={profile.avatar}
+                    alt={profile.username}
+                    style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+                  />
+                  <span style={{ fontWeight: 500 }}>{profile.username}</span>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFollow(profile.username);
+                  }}
+                  style={{
+                    padding: "6px 14px",
+                    borderRadius: "8px",
+                    border: "none",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    background: followed ? "#e0e0e0" : "#5170ff",
+                    color: followed ? "#333" : "#fff",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {followed ? "Following" : "Follow"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Modal */}
+        {selectedProfile && (
+          <div
+            onClick={() => setSelectedProfile(null)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(0,0,0,0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "#fff",
+                borderRadius: "16px",
+                padding: "30px",
+                maxWidth: "400px",
+                width: "90%",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px" }}>
+                <img
+                  src={selectedProfile.avatar}
+                  alt={selectedProfile.username}
+                  style={{ width: "60px", height: "60px", borderRadius: "50%" }}
+                />
+                <div>
+                  <h3 style={{ margin: 0 }}>{selectedProfile.username}</h3>
+                  <p style={{ margin: 0, color: "#777" }}>{selectedProfile.location}</p>
+                </div>
+              </div>
+              <p style={{ marginBottom: "15px" }}>{selectedProfile.bio}</p>
+              <h4 style={{ marginBottom: "8px" }}>Recent Posts:</h4>
+              <ul style={{ paddingLeft: "20px", marginBottom: "15px" }}>
+                {selectedProfile.posts.map((post, idx) => (
+                  <li key={idx} style={{ marginBottom: "6px" }}>{post}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setSelectedProfile(null)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: "#5170ff",
+                  color: "#fff",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  })()}
+</div>
+
+
 
               <div className="btn-group">
                 <button onClick={() => navigate("/rewards")} style={sidebarButton(colors.accentAqua)}>
@@ -321,10 +486,9 @@ const ProfilePage = () => {
               </div>
             </aside>
 
-            {/* MAIN CONTENT */}
             <main className="pp-main">
               
-              {/* MY BLOGS SECTION */}
+             
 <section className="pp-card">
   <div style={{ 
       display: "flex",
@@ -334,7 +498,7 @@ const ProfilePage = () => {
   }}>
     <h2 style={{ color: colors.accentAqua }}>{t("My Blogs")}</h2>
 
-    {/* Create new blog button */}
+    {/* + new blog button */}
     <button
       onClick={() => navigate("/create-blog")}
       style={{
@@ -348,7 +512,7 @@ const ProfilePage = () => {
         boxShadow: "0 8px 20px rgba(157,230,230,0.20)"
       }}
     >
-      + Create Blog
+      + Create a Blog
     </button>
 
     
@@ -363,18 +527,21 @@ const ProfilePage = () => {
         title: "My Kyoto Adventure",
         image: "/kyoto.jpg",
         description: "Temples, tea houses, cherry blossoms…",
+        likes: 142
       },
       {
         id: 2,
         title: "Cape Town Memories",
         image: "/capetown.jpg",
         description: "Hiking Table Mountain + penguin beaches!",
+        likes: 87,
       },
       {
         id: 3,
         title: "Iceland Roadtrip",
         image: "/iceland.jpg",
         description: "Waterfalls, geysers, hot springs & volcanoes.",
+        likes: 215,
       },
       {
         id: 4,
@@ -382,6 +549,7 @@ const ProfilePage = () => {
         image:
           "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60",
         description: "Rice terraces, beaches & peaceful mornings.",
+         likes: 176,
       },
     ].map((blog) => (
       <div
@@ -410,7 +578,7 @@ const ProfilePage = () => {
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <FaRegHeart size={16} color={colors.accentPink} />
-              <span style={{ fontSize: 14, color: "#444" }}>128</span>
+              <span style={{ fontSize: 14, color: "#444" }}>{blog.likes}</span>
             </div>
 
             <button
@@ -439,7 +607,7 @@ const ProfilePage = () => {
 </section>
 
 
-              {/* TRENDING BLOGS */}
+              {/* Tending blogs */}
               <section className="pp-card">
                 <h2 style={{ color: colors.accentAqua, marginBottom: 12 }}>{t("Trending Blogs")}</h2>
 
@@ -448,9 +616,9 @@ const ProfilePage = () => {
                     const blogs = [
                       {
                         id: 1,
-                        title: "My Experience in Oceania",
+                        title: "The clearest water on Earth!",
                         excerpt:
-                          "The most beautiful place on Earth! Here's how my trip began!",
+                          "This was like being on Pandora! Here's how my trip began...",
                       },
                       {
                         id: 2,
@@ -486,12 +654,11 @@ const ProfilePage = () => {
                 </div>
               </section>
 
-              {/* NEXT BUTTON */}
-              <div className="next-button-wrap">
-                <button className="next-button" onClick={() => navigate("/travel-tools")}>Next →</button>
-              </div>
-              {/* END NEXT BUTTON */}
+              {/* next */} 
+              <div className="next-button-wrap"> <button className="next-button" 
+              onClick={() => navigate("/trip-countdown")}>Next →</button> </div> 
 
+            
             </main>
           </div>
         </div>

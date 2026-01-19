@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Confetti from "react-confetti";
+import { useNavigate } from "react-router-dom";
+
 
 const countryQuestsData = {
   France: [
@@ -67,6 +69,9 @@ const RewardsPage = () => {
   const [questConfetti, setQuestConfetti] = useState(false);
   const [discovered, setDiscovered] = useState([]);
   const [popup, setPopup] = useState(null);
+
+  const navigate = useNavigate();
+
 
   const badges = [
     { name: "🌍 Traveller", unlocked: true, color: "#2ecc71" },
