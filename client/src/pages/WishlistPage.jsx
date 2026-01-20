@@ -57,18 +57,18 @@ const WishlistPage = () => {
     setShowAddForm(false);
   };
 
-  // Demo Explore Feed
+  // Explore Feed
   const trendingDestinations = [
     { id: 101, name: "Santorini, Greece", image: "/santorini.jpg" },
-    { id: 102, name: "Machu Picchu, Peru", image: "/machu.jpg" },
-    { id: 103, name: "Banff, Canada", image: "/banff.jpg" },
+    { id: 102, name: "Machu Picchu, Peru", image: "/machu_p.jpg" },
+    { id: 103, name: "Banff, Canada", image: "/banff2.jpg" },
   ];
 
-  // Demo Similar Travelers
+  // Similar Travelers
   const similarTravelers = [
-    { id: 201, name: "Alice", avatar: "/alice.jpg", common: ["Bali", "Kyoto"] },
-    { id: 202, name: "Bob", avatar: "/bob.jpg", common: ["Reykjavik", "Toronto"] },
-    { id: 203, name: "Charlie", avatar: "/charlie.jpg", common: ["Bali", "Santorini"] },
+    { id: 201, name: "Alice", avatar: "/flower.jpg", common: ["Bali", "Kyoto"] },
+    { id: 202, name: "Bob", avatar: "/avatarpic.jpg", common: ["Reykjavik", "Toronto"] },
+    { id: 203, name: "Charlie", avatar: "/catavatar.jpg", common: ["Bali", "Santorini"] },
   ];
 
   return (
@@ -89,7 +89,7 @@ const WishlistPage = () => {
       <div style={{ display: "flex", alignItems: "center", marginBottom: "30px", gap: "16px" }}>
         <div style={{ width: "80px", height: "80px", borderRadius: "40px", background: "#ccc" }}></div>
         <div>
-          <h2 style={{ margin: 0 }}>TravelerName</h2>
+          <h2 style={{ margin: 0 }}>Wendy</h2>
           <p style={{ margin: 0, color: "#777" }}>Traveler & Explorer</p>
         </div>
       </div>
