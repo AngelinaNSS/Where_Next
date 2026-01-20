@@ -67,7 +67,7 @@ const [showHearts, setShowHearts] = useState(false);
 
   const visibleComments = showAllComments ? comments : comments.slice(0, 3);
 
-  // add new comment
+  // new comments here
   const addComment = () => {
     const text = newComment.trim();
     if (!text && !selectedGif) return; 
@@ -126,7 +126,7 @@ const [showHearts, setShowHearts] = useState(false);
     
     <div className="blog-page">
         
-        {/* HEADER */}
+        {/* main header */}
   <header className="blog-header">
     <h1 className="blog-logo">Where Next</h1>
 
@@ -139,7 +139,7 @@ const [showHearts, setShowHearts] = useState(false);
 
 
 
-      {/* HERO */}
+      {/* hero */}
       {traveler.heroImage && (
         <div className="blog-hero">
           <img src={traveler.heroImage} alt={traveler.title} />
@@ -150,11 +150,11 @@ const [showHearts, setShowHearts] = useState(false);
       )}
 
 
-      {/* MAIN */}
+      
       <div className="blog-container">
 
         
-        {/* SIDEBAR */}
+        {/* sidebar*/}
         <aside className={`blog-sidebar ${isMobile ? "mobile" : ""}`}>
           <img
             className="sidebar-img"
@@ -166,7 +166,7 @@ const [showHearts, setShowHearts] = useState(false);
           <p className="sidebar-bio">{traveler.bio}</p>
 
 
-          {/* LIKE BUTTON WITH HEARTS */}
+          {/* like button */}
 <div style={{ margin: "16px 0", position: "relative", textAlign: "center" }}>
   <button
     onClick={() => {
@@ -223,11 +223,11 @@ const [showHearts, setShowHearts] = useState(false);
             </div>
           )}
 
-          {/* COMMENTS SECTION */}
+          {/* Comments section */}
           <div className="comments-section">
             <h4>Comments</h4>
 
-            {/* input comments */}
+            {/* users input comments here */}
             <div className="comment-input-row enhanced">
               <div className="input-left">
                 <input
@@ -330,7 +330,7 @@ const [showHearts, setShowHearts] = useState(false);
               </div>
             </div>
 
-            {/* COMMENT LIST */}
+            {/* Comments list */}
             <div className="comment-list">
               {visibleComments.map((comment, idx) => (
                 <div className="comment-item" key={idx}>
@@ -376,7 +376,7 @@ const [showHearts, setShowHearts] = useState(false);
           </div>
         </aside>
 
-        {/* MAIN ARTICLE */}
+        {/* Main article */}
         <main className="blog-main">
           {traveler.story && (
             <section className="blog-card">

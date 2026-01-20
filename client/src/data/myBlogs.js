@@ -10,7 +10,7 @@ I explored temples, ate the best matcha desserts, and walked through quiet bambo
     sections: [
       {
         title: "Fushimi Inari",
-        image: "/fushimi_inari.jpg",
+        image: "/redtori.jpg",
         text: "The endless red torii gates were absolutely magical at sunrise."
       },
       {
@@ -32,12 +32,12 @@ I explored temples, ate the best matcha desserts, and walked through quiet bambo
     heroImage: "/capetown.jpg",
     story: `Cape Town surprised me in every way…
 
-Beaches, mountains, penguins — the perfect combination.`,
+Beaches, mountains, penguins, honestly for me was the perfect combination.`,
     sections: [
       {
         title: "Table Mountain",
         image: "/tablemtn.jpg",
-        text: "The views were unreal. Highly recommend going early."
+        text: "The views were unreal. Highly recommend going early. Standing at the top of Table Mountain felt like stepping into another world. The cable car ride alone had my heart racing—in the best way—as the city of Cape Town shrank beneath me and the ocean stretched out like a sheet of glass. Up on the plateau, the air was cooler, the wind a little wild, and the views absolutely unreal. I wandered along the rocky paths, stopping every few minutes because how could I not take another photo? From the Twelve Apostles to Robben Island, everything looked painted into place. It’s one of those rare spots where you feel tiny and infinite at the same time, and leaving felt like saying goodbye to a dream I wasn’t quite ready to wake up from."
       }
     ],
     likes: Math.floor(Math.random() * 200) + 50,
