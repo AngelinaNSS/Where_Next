@@ -1,45 +1,204 @@
+// Backend implemented by Nyela
+// Where Next – Express.js REST API
+
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
 const path = require("path");
+const { v4: uuid } = require("uuid");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-memory posts array
-const posts = [];
+const DB_PATH = path.join(__dirname, "db.json");
 
-// Root
-app.get("/", (req, res) => {
-  res.send("Hello! Backend is working.");
+// ----------------- Helpers -----------------
+function loadDB() {
+  if (!fs.existsSync(DB_PATH)) {
+    fs.writeFileSync(
+      DB_PATH,
+      JSON.stringify({ users: [], posts: [], likes: [], comments: [] }, null, 2)
+    );
+  }
+  return JSON.parse(fs.readFileSync(DB_PATH));
+}
+
+function saveDB(db) {
+  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
+}
+
+// ----------------- Auth -----------------
+const sessions = new Map();
+
+function auth(req, res, next) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token || !sessions.has(token)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  req.userId = sessions.get(token);
+  next();
+}
+
+// ----------------- Health -----------------
+app.get("/health", (req, res) => {
+  res.json({ status: "backend running" });
 });
 
-// Health check
-app.get("/api/health", (req, res) => {
-  res.json({ status: "Backend is running!" });
+// ----------------- Register -----------------
+app.post("/auth/register", (req, res) => {
+  const { name, email, password } = req.body;
+  const db = loadDB();
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
+  if (db.users.find(u => u.email === email)) {
+    return res.status(409).json({ error: "User already exists" });
+  }
+
+  const user = { id: uuid(), name, email, password };
+  db.users.push(user);
+  saveDB(db);
+
+  res.status(201).json({ id: user.id, name, email });
 });
 
-// GET all posts
-app.get("/api/posts", (req, res) => {
+// ----------------- Login -----------------
+app.post("/auth/login", (req, res) => {
+  const { email, password } = req.body;
+  const db = loadDB();
+
+  const user = db.users.find(
+    u => u.email === email && u.password === password
+  );
+
+  if (!user) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  const token = uuid();
+  sessions.set(token, user.id);
+
+  res.json({ token });
+});
+
+// ----------------- Create Post -----------------
+app.post("/posts", auth, (req, res) => {
+  const { title, content, destination } = req.body;
+  const db = loadDB();
+
+  if (!title || !content) {
+    return res.status(400).json({ error: "Title and content required" });
+  }
+
+  const post = {
+    id: uuid(),
+    authorId: req.userId,
+    title,
+    content,
+    destination: destination || "",
+    createdAt: new Date().toISOString()
+  };
+
+  db.posts.push(post);
+  saveDB(db);
+
+  res.status(201).json(post);
+});
+
+// ----------------- Get All Posts -----------------
+app.get("/posts", (req, res) => {
+  const db = loadDB();
+
+  const posts = db.posts.map(p => ({
+    ...p,
+    likes: db.likes.filter(l => l.postId === p.id).length,
+    comments: db.comments.filter(c => c.postId === p.id).length
+  }));
+
   res.json(posts);
 });
 
-// POST a new post
-app.post("/api/posts", (req, res) => {
-  const { title, content } = req.body;
-  const post = { id: posts.length + 1, title, content };
-  posts.push(post);
-  res.json(post);
+// ----------------- Like Post -----------------
+app.post("/posts/:id/like", auth, (req, res) => {
+  const db = loadDB();
+  const postId = req.params.id;
+
+  const alreadyLiked = db.likes.find(
+    l => l.postId === postId && l.userId === req.userId
+  );
+
+  if (!alreadyLiked) {
+    db.likes.push({
+      id: uuid(),
+      postId,
+      userId: req.userId
+    });
+    saveDB(db);
+  }
+
+  res.json({ liked: true });
 });
 
-// Serve test HTML file
-app.get("/test-post", (req, res) => {
-  res.sendFile(path.join(__dirname, "test-post.html"));
+// ----------------- Unlike Post -----------------
+app.delete("/posts/:id/like", auth, (req, res) => {
+  const db = loadDB();
+  const postId = req.params.id;
+
+  db.likes = db.likes.filter(
+    l => !(l.postId === postId && l.userId === req.userId)
+  );
+
+  saveDB(db);
+  res.json({ liked: false });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+// ----------------- Add Comment -----------------
+app.post("/posts/:id/comment", auth, (req, res) => {
+  const { content } = req.body;
+  const db = loadDB();
 
+  if (!content) {
+    return res.status(400).json({ error: "Comment required" });
+  }
 
+  const comment = {
+    id: uuid(),
+    postId: req.params.id,
+    authorId: req.userId,
+    content,
+    createdAt: new Date().toISOString()
+  };
 
+  db.comments.push(comment);
+  saveDB(db);
 
+  res.status(201).json(comment);
+});
+
+// ----------------- Delete Comment -----------------
+app.delete("/comments/:id", auth, (req, res) => {
+  const db = loadDB();
+  const comment = db.comments.find(c => c.id === req.params.id);
+
+  if (!comment) {
+    return res.status(404).json({ error: "Comment not found" });
+  }
+
+  if (comment.authorId !== req.userId) {
+    return res.status(403).json({ error: "Not your comment" });
+  }
+
+  db.comments = db.comments.filter(c => c.id !== comment.id);
+  saveDB(db);
+
+  res.json({ deleted: true });
+});
+
+// ----------------- Start Server -----------------
+const PORT = 4000;
+app.listen(PORT, () => {
+  console.log(`Backend running at http://localhost:${PORT}`);
+});

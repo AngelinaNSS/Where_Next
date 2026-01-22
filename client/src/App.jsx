@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SplashPage from "./pages/SplashPage";
 import AuthPage from "./pages/AuthPage";
@@ -26,15 +26,45 @@ import OrganizeTripPage from "./pages/OrganizeTripPage";
 import EditBlogPage from "./pages/EditBlogPage";
 import AboutPage from "./pages/AboutPage";
 
-
-
-
-
-
-
 function App() {
+  
+  useEffect(() => {
+    console.log("🔗 Testing backend connection...");
+   
+    const backendUrl = `http://${window.location.hostname}:4000`;
+    console.log("Backend URL:", backendUrl);
+    
+   
+    fetch(`${backendUrl}/health`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        console.log("✅ Backend connected successfully:", data);
+       
+        document.title = `Where Next ✓ | ${data.status}`;
+      })
+      .catch(err => {
+        console.error("❌ Backend connection failed:", err);
+        console.log("ℹ️ Make sure backend is running on port 4000");
+      });
+      
+   
+    fetch(`${backendUrl}/posts`)
+      .then(res => res.json())
+      .then(posts => {
+        console.log(`📝 Backend has ${posts.length} posts`);
+      })
+      .catch(err => {
+        console.log("ℹ️ Posts endpoint requires proper setup");
+      });
+  }, []);
+
   return (
     <Router>
+    
+      
       <Routes>
         <Route path="/" element={<SplashPage />} />
         <Route path="/auth" element={<AuthPage />} />
@@ -60,15 +90,13 @@ function App() {
         <Route path="/organize" element={<OrganizeTripPage />} />
         <Route path="/edit-blog/:blogId" element={<EditBlogPage />} />
         <Route path="/about" element={<AboutPage />} />
-
+        
        
-
+        <Route path="*" element={<SplashPage />} />
       </Routes>
       <Footer />
     </Router>
-    
   );
 }
 
 export default App;
-
