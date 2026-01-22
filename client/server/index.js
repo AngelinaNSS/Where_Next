@@ -1,4 +1,3 @@
-// Backend implemented by Nyela
 // Where Next – Express.js REST API
 
 const express = require("express");
@@ -73,6 +72,78 @@ app.get("/health", async (req, res) => {
       infrastructure: "Docker containers: PostgreSQL, Backend, Frontend"
     });
   }
+});
+
+// ----------------- Seed Data -----------------
+app.post("/api/seed", (req, res) => {
+  const db = loadDB();
+  
+  // Clear existing test data
+  db.users = db.users.filter(u => !u.email.includes('@test.com'));
+  db.posts = [];
+  
+  // Add REAL test users that work
+  const testUsers = [
+    { 
+      id: uuid(), 
+      name: "Travel Explorer", 
+      email: "explorer@test.com", 
+      password: "test123",
+      bio: "World traveler visiting 30+ countries",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=explorer"
+    },
+    { 
+      id: uuid(), 
+      name: "Mountain Climber", 
+      email: "climber@test.com", 
+      password: "test123",
+      bio: "Professional mountaineer and outdoor guide",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=climber"
+    },
+    { 
+      id: uuid(), 
+      name: "City Photographer", 
+      email: "photo@test.com", 
+      password: "test123",
+      bio: "Urban photography enthusiast",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=photographer"
+    }
+  ];
+  
+  // Add REAL posts that work
+  const testPosts = [
+    {
+      id: uuid(),
+      title: "Sunset in Santorini",
+      content: "The most beautiful sunset I've ever seen in Oia, Santorini. The white buildings turn golden as the sun sets over the caldera.",
+      userId: testUsers[0].id,
+      location: "Santorini, Greece",
+      image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
+      likes: 42,
+      comments: 5
+    },
+    {
+      id: uuid(),
+      title: "Hiking the Swiss Alps",
+      content: "Just completed a 5-day hike through the Swiss Alps. The Matterhorn views are absolutely breathtaking!",
+      userId: testUsers[1].id,
+      location: "Zermatt, Switzerland",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w-800",
+      likes: 87,
+      comments: 12
+    }
+  ];
+  
+  db.users.push(...testUsers);
+  db.posts.push(...testPosts);
+  saveDB(db);
+  
+  res.json({ 
+    success: true,
+    message: "✅ I added real test data - profiles now work!",
+    users: testUsers.map(u => ({ id: u.id, name: u.name, email: u.email })),
+    posts: testPosts.map(p => ({ id: p.id, title: p.title, location: p.location }))
+  });
 });
 
 // ----------------- Register -----------------

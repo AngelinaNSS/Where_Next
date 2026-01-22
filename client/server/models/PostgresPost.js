@@ -1,16 +1,13 @@
-// PostgreSQL Model for Project Where Next - Migration in Progress
 const { Pool } = require('pg');
 
-// PostgreSQL connection pool
 const pool = new Pool({
-  user: 'admin',
-  host: 'postgres',  //
-  database: 'wherenext',
-  password: 'password123',
+  user: process.env.POSTGRES_USER || 'admin',
+  host: 'postgres',
+  database: process.env.POSTGRES_DB || 'wherenext',
+  password: process.env.POSTGRES_PASSWORD || 'password123',
   port: 5432,
 });
 
-// Test here the connection function
 async function testPostgreSQL() {
   try {
     const result = await pool.query('SELECT NOW() as current_time, version() as postgres_version');
