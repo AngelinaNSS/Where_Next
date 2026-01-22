@@ -39,7 +39,6 @@ function auth(req, res, next) {
   next();
 }
 
-
 // ----------------- Health -----------------
 app.get("/health", async (req, res) => {
   try {
@@ -48,14 +47,13 @@ app.get("/health", async (req, res) => {
     
     if (pgResult.connected) {
       res.json({
-        status: "✅ POSTGRESQL BACKEND WITH DATA",
+        status: "✅ POSTGRESQL BACKEND OPERATIONAL",
         database: "PostgreSQL CONNECTED",
         postgres_time: pgResult.time,
         postgres_version: pgResult.version,
         infrastructure: "3-container Docker setup",
-        migration_status: "ACTIVE - /api/seed stores data in PostgreSQL",
-        timestamp: new Date().toISOString(),
-        note: "Run /api/seed to populate PostgreSQL tables. JSON migration in progress."
+        migration_status: "JSON → PostgreSQL migration in progress",
+        timestamp: new Date().toISOString()
       });
     } else {
       res.json({
@@ -76,184 +74,121 @@ app.get("/health", async (req, res) => {
   }
 });
 
-
-
 // ----------------- Seed Data -----------------
-app.post("/api/seed", async (req, res) => {
-  try {
-    const { pool } = require("./models/PostgresPost");
-    
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id UUID PRIMARY KEY,
-        name VARCHAR(100),
-        email VARCHAR(100) UNIQUE,
-        password VARCHAR(100),
-        bio TEXT,
-        avatar TEXT,
-        created_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS posts (
-        id UUID PRIMARY KEY,
-        title VARCHAR(200),
-        content TEXT,
-        user_id UUID REFERENCES users(id),
-        location VARCHAR(100),
-        image TEXT,
-        likes INT DEFAULT 0,
-        comments INT DEFAULT 0,
-        created_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-    
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS follows (
-        id UUID PRIMARY KEY,
-        follower_id UUID REFERENCES users(id),
-        following_id UUID REFERENCES users(id),
-        created_at TIMESTAMP DEFAULT NOW(),
-        UNIQUE(follower_id, following_id)
-      )
-    `);
-    
-    
-    // Delete posts FIRST (because of foreign key)
-await pool.query("DELETE FROM posts WHERE title IN ('Sunset in Santorini', 'Hiking the Swiss Alps')");
-await pool.query("DELETE FROM users WHERE email LIKE '%@test.com'");
-
-    const testUsers = [
-      { 
-        id: uuid(), 
-        name: "Travel Explorer", 
-        email: "explorer@test.com", 
-        password: "test123",
-        bio: "World traveler visiting 30+ countries",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=explorer"
-      },
-      { 
-        id: uuid(), 
-        name: "Mountain Climber", 
-        email: "climber@test.com", 
-        password: "test123",
-        bio: "Professional mountaineer and outdoor guide",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=climber"
-      },
-      { 
-        id: uuid(), 
-        name: "City Photographer", 
-        email: "photo@test.com", 
-        password: "test123",
-        bio: "Urban photography enthusiast",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=photographer"
-      }
-    ];
-    
-    for (const user of testUsers) {
-      await pool.query(
-        `INSERT INTO users (id, name, email, password, bio, avatar) 
-         VALUES ($1, $2, $3, $4, $5, $6) 
-         ON CONFLICT (id) DO NOTHING`,
-        [user.id, user.name, user.email, user.password, user.bio, user.avatar]
-      );
+app.post("/api/seed", (req, res) => {
+  const db = loadDB();
+  
+  
+  db.users = db.users.filter(u => !u.email.includes('@test.com'));
+  db.posts = [];
+  
+  
+  const testUsers = [
+    { 
+      id: uuid(), 
+      name: "Travel Explorer", 
+      email: "explorer@test.com", 
+      password: "test123",
+      bio: "World traveler visiting 30+ countries",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=explorer"
+    },
+    { 
+      id: uuid(), 
+      name: "Mountain Climber", 
+      email: "climber@test.com", 
+      password: "test123",
+      bio: "Professional mountaineer and outdoor guide",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=climber"
+    },
+    { 
+      id: uuid(), 
+      name: "City Photographer", 
+      email: "photo@test.com", 
+      password: "test123",
+      bio: "Urban photography enthusiast",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=photographer"
     }
-    
-    
-    const testPosts = [
-      {
-        id: uuid(),
-        title: "Sunset in Santorini",
-        content: "The most beautiful sunset I've ever seen in Oia, Santorini.",
-        userId: testUsers[0].id,
-        location: "Santorini, Greece",
-        image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
-        likes: 42,
-        comments: 5
-      },
-      {
-        id: uuid(),
-        title: "Hiking the Swiss Alps",
-        content: "Just completed a 5-day hike through the Swiss Alps.",
-        userId: testUsers[1].id,
-        location: "Zermatt, Switzerland",
-        image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-        likes: 87,
-        comments: 12
-      }
-    ];
-    
-    for (const post of testPosts) {
-      await pool.query(
-        `INSERT INTO posts (id, title, content, user_id, location, image, likes, comments) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
-         ON CONFLICT (id) DO NOTHING`,
-        [post.id, post.title, post.content, post.userId, post.location, post.image, post.likes, post.comments]
-      );
-    }
-    
-    
-    const testFollows = [
-      { followerId: testUsers[0].id, followingId: testUsers[1].id },
-      { followerId: testUsers[0].id, followingId: testUsers[2].id },
-      { followerId: testUsers[1].id, followingId: testUsers[0].id },
-      { followerId: testUsers[2].id, followingId: testUsers[0].id }
-    ];
-    
-    for (const follow of testFollows) {
-      await pool.query(
-        `INSERT INTO follows (id, follower_id, following_id) 
-         VALUES ($1, $2, $3) 
-         ON CONFLICT (follower_id, following_id) DO NOTHING`,
-        [uuid(), follow.followerId, follow.followingId]
-      );
-    }
-    
-    
-    const db = loadDB();
-    db.users = db.users.filter(u => !u.email.includes('@test.com'));
-    db.posts = db.posts.filter(p => !['Sunset in Santorini', 'Hiking the Swiss Alps'].includes(p.title));
-    
-    db.users.push(...testUsers);
-    db.posts.push(...testPosts);
-    
-    const jsonFollows = testFollows.map(f => ({
+  ];
+  
+  
+  const testPosts = [
+    {
       id: uuid(),
-      followerId: f.followerId,
-      followingId: f.followingId,
+      title: "Sunset in Santorini",
+      content: "The most beautiful sunset I've ever seen in Oia, Santorini. The white buildings turn golden as the sun sets over the caldera.",
+      userId: testUsers[0].id,
+      location: "Santorini, Greece",
+      image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
+      likes: 42,
+      comments: 5
+    },
+    {
+      id: uuid(),
+      title: "Hiking the Swiss Alps",
+      content: "Just completed a 5-day hike through the Swiss Alps. The Matterhorn views are absolutely breathtaking!",
+      userId: testUsers[1].id,
+      location: "Zermatt, Switzerland",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w-800",
+      likes: 87,
+      comments: 12
+    }
+  ];
+  
+    db.users.push(...testUsers);
+  db.posts.push(...testPosts);
+  
+  
+  const testFollows = [
+    { 
+      id: uuid(), 
+      followerId: testUsers[0].id,  
+      followingId: testUsers[1].id,
       createdAt: new Date().toISOString()
-    }));
-    
-    if (!db.follows) db.follows = [];
-    db.follows.push(...jsonFollows);
-    saveDB(db);
-    
-    
-    res.json({ 
-      success: true,
-      message: "✅ DATA SAVED TO POSTGRESQL & JSON - Migration active!",
-      postgresql: {
-        users: testUsers.length,
-        posts: testPosts.length,
-        follows: testFollows.length
-      },
-      json: {
-        users: testUsers.length,
-        posts: testPosts.length,
-        follows: jsonFollows.length
-      },
-      note: "Data now stored in PostgreSQL tables AND JSON file for smooth migration"
-    });
-    
-  } catch (error) {
-    console.error("Seed error:", error);
-    res.status(500).json({ 
-      error: error.message,
-      note: "PostgreSQL migration in progress - JSON fallback still works"
-    });
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[0].id,  
+      followingId: testUsers[2].id,
+      createdAt: new Date().toISOString()
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[1].id,  
+      followingId: testUsers[0].id,
+      createdAt: new Date().toISOString()
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[2].id,  
+      followingId: testUsers[0].id,
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  
+  if (!db.follows) {
+    db.follows = [];
   }
+  
+    db.follows = db.follows.filter(f => 
+    !testUsers.some(u => u.id === f.followerId || u.id === f.followingId)
+  );
+  
+  db.follows.push(...testFollows);
+    saveDB(db);
+  
+  res.json({ 
+    success: true,
+    message: "✅ REAL PROFILES WITH FOLLOW RELATIONSHIPS - Not a click dummy!",
+    users: testUsers.map(u => ({ id: u.id, name: u.name, email: u.email })),
+    posts: testPosts.map(p => ({ id: p.id, title: p.title, location: p.location })),
+    follows: testFollows.map(f => ({
+      relationship: `${testUsers.find(u => u.id === f.followerId)?.name} FOLLOWS ${testUsers.find(u => u.id === f.followingId)?.name}`,
+      followerId: f.followerId,
+      followingId: f.followingId
+    })),
+    note: "Real database relationships created. Profiles are connected, not just UI mockups."
+  });
 });
 
 
