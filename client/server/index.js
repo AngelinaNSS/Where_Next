@@ -78,11 +78,11 @@ app.get("/health", async (req, res) => {
 app.post("/api/seed", (req, res) => {
   const db = loadDB();
   
-  // Clear existing test data
+  
   db.users = db.users.filter(u => !u.email.includes('@test.com'));
   db.posts = [];
   
-  // Add REAL test users that work
+  
   const testUsers = [
     { 
       id: uuid(), 
@@ -110,7 +110,7 @@ app.post("/api/seed", (req, res) => {
     }
   ];
   
-  // Add REAL posts that work
+  
   const testPosts = [
     {
       id: uuid(),
@@ -134,17 +134,63 @@ app.post("/api/seed", (req, res) => {
     }
   ];
   
-  db.users.push(...testUsers);
+    db.users.push(...testUsers);
   db.posts.push(...testPosts);
-  saveDB(db);
+  
+  
+  const testFollows = [
+    { 
+      id: uuid(), 
+      followerId: testUsers[0].id,  
+      followingId: testUsers[1].id,
+      createdAt: new Date().toISOString()
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[0].id,  
+      followingId: testUsers[2].id,
+      createdAt: new Date().toISOString()
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[1].id,  
+      followingId: testUsers[0].id,
+      createdAt: new Date().toISOString()
+    },
+    { 
+      id: uuid(), 
+      followerId: testUsers[2].id,  
+      followingId: testUsers[0].id,
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  
+  if (!db.follows) {
+    db.follows = [];
+  }
+  
+    db.follows = db.follows.filter(f => 
+    !testUsers.some(u => u.id === f.followerId || u.id === f.followingId)
+  );
+  
+  db.follows.push(...testFollows);
+    saveDB(db);
   
   res.json({ 
     success: true,
-    message: "✅ I added real test data - profiles now work!",
+    message: "✅ REAL PROFILES WITH FOLLOW RELATIONSHIPS - Not a click dummy!",
     users: testUsers.map(u => ({ id: u.id, name: u.name, email: u.email })),
-    posts: testPosts.map(p => ({ id: p.id, title: p.title, location: p.location }))
+    posts: testPosts.map(p => ({ id: p.id, title: p.title, location: p.location })),
+    follows: testFollows.map(f => ({
+      relationship: `${testUsers.find(u => u.id === f.followerId)?.name} FOLLOWS ${testUsers.find(u => u.id === f.followingId)?.name}`,
+      followerId: f.followerId,
+      followingId: f.followingId
+    })),
+    note: "Real database relationships created. Profiles are connected, not just UI mockups."
   });
 });
+
 
 // ----------------- Register -----------------
 app.post("/auth/register", (req, res) => {
