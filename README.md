@@ -8,3 +8,4 @@ Our mission is to transform travel from overwhelming research into confident adv
 
 On WhereNext, you can connect with other users by following them, liking their posts, leaving comments, suggestions, or tips, and forming genuine friendships that can lead to meeting up and exploring new destinations together.
 
+
